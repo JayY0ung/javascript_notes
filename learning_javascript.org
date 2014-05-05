@@ -1,0 +1,47 @@
+#+TITLE: Learning JavaScript
+#+LANGUAGE: EN
+#+AUTHOR: Yang Jie
+#+EMAIL: outstanding.yang@gmail.com
+#+DESCRIPTION: My notes on reading "JavaScript - The Definitive Guide 6th Edition"
+
+JavaScript is the programming language of the Web. JavaScript is part of triad
+of technologies that all Web developers must learn: *HTML* to specify the
+content of web pages, *CSS* to specify the presentation of web pages, and
+*JavaScript* to specify the behavior of web pages.
+
+* Introduction
+  :PROPERTIES:
+  :CUSTOM_ID: introduction
+  :END:
+Main structure of the book.
+** Core JavaScript
+   :PROPERTIES:
+   :CUSTOM_ID: coreJavascript
+   :END:
+This is the lowest level of JavaScript including Lexical Structure, Types,
+Values, Variables, Expressions and Operators, Statements, Objects, Arrays,
+Functions, Classes and Modules, Pattern Matching with Regular Expressions,
+JavaScript Subsets and Extensions.
+** Client-Side JavaScript
+   :PROPERTIES:
+   :CUSTOM_ID: clientSideJavascript
+   :END:
+Client-Side JavaScript does not exhibit the nonlinear cross-reference problem
+nearly to the extent that the core language does, and it is possible to learn
+how to use JavaScritp in web browsers in a fairly linear sequence.
+* Getting Started
+  :PROPERTIES:
+  :CUSTOM_ID: gettingStarted
+  :END:
+** Lexical Structure
+   :PROPERTIES:
+   :CUSTOM_ID: lexicalStructure
+   :END:
+*** Character Set
+    :PROPERTIES:
+    :CUSTOM_ID: characterSet
+    :END:
+JavaScript programs are written using the Unicode character set.
+JavaScript is a case-sensitive language, but HTML is not case-sensitive
+(although XHTML is). Many client-side JavaScript objects and properties have the
+same names as the HTML tags and attributes. Please be care!
