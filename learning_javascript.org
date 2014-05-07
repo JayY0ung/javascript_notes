@@ -42,6 +42,56 @@ how to use JavaScritp in web browsers in a fairly linear sequence.
     :CUSTOM_ID: characterSet
     :END:
 JavaScript programs are written using the Unicode character set.
+
 JavaScript is a case-sensitive language, but HTML is not case-sensitive
 (although XHTML is). Many client-side JavaScript objects and properties have the
 same names as the HTML tags and attributes. Please be care!
+
+JavaScript ignores spaces that appear between tokens in programs. Because you
+can use spaces and newlines freely in your programs, you can format and indent
+your programs in a neat and consistent way.
+
+JavaScript defines special sequences of six ASCII character to represent any
+16-bit Unicode codepoint. Unicode escapes begin with the characters \u and are
+followed by exactly four hexadecimal digits. They may appear in JavaScript
+string literals, and in identifiers (but not in language keywords). Also they
+may appear in comments, but not interpreted as Unicode.
+*** Comments
+    :PROPERTIES:
+    :CUSTOM_ID: comments
+    :END:
+Two styles of comments:
+1. Any text between a // and the end of a line.
+2. Any text between the charaters /* and */, these comments may span multiple
+   lines but may not be nested.
+*** Literals
+    :PROPERTIES:
+    :CUSTOM_ID: literals
+    :END:
+A literal is a data value that appears directly in a program.
+*** Identifiers and Reserved Words
+    :PROPERTIES:
+    :CUSTOM_ID: identifiers
+    :END:
+A JavaScript identifier must begin with a letter, an underscore, or a dollor
+sign. Subsequent characters can be letters, digits, underscores, or dollor sign.
+Digits are /not/ allowed as the first character.
+
+JavaScript reserves a number of identifiers as the keywords of the language
+itself. They are not allowed as variable, function, or parameter names.
+*** Optional Semicolons
+    :PROPERTIES:
+    :CUSTOM_ID: optionSemicolons
+    :END:
+JavaScript uses the semicolon to separate statements from each other. In
+JavaScript, you can usually omit the semicolon between two statements if those
+statements are written on separate lines. You should always use semicolons to
+explicitly mark the ends of statements, even where they are not required.
+
+There are two exceptions to the general rule that JavaScript interprets line
+breaks as semicolons when it cannot parse the second line as a continuation of
+the statement on the first line.
+1. return, break, and continue: You must not insert a line break between return,
+   break, or continue and the expression that follows the keyword.
+2. ++ and -- operators: as postfix operator, they must appear on the same line
+   as the expression they apply to.
