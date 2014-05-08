@@ -95,3 +95,177 @@ the statement on the first line.
    break, or continue and the expression that follows the keyword.
 2. ++ and -- operators: as postfix operator, they must appear on the same line
    as the expression they apply to.
+** Types, Values, and Variables
+   :PROPERTIES:
+   :CUSTOM_ID: typesValuesVariables
+   :END:
+Computer programs work by manipulating /values/, such as the number 3.14 or the
+text "hello world". The kinds of values that can be represented and manipulated
+in a programming language is the set of /types/ it supports. When a program
+needs to retain a value for future use, it assigns the value to a /variable/.
+
+JavaScript types can be divided into two categories:
+- Primitive types :: numbers, strings, booleans, null, and undefined
+- Object types :: Not primitive types are objects types
+And types with methods and types without. Also, *mutable* and *immutable* types.
+
+JavaScript object is an unordered collection of named values. The language
+defines a special kind of object - /array/ that represents an ordered collection
+of numbered values. Another special kind of object is a /function/ which has
+excutable code associated with it. The most important thing about functions in
+JavaScript is that they are true values and JavaScript programs can treat them
+like regular objects.
+
+*Functions* that are written to be used (with the *new* operator) to initialize
+a newly created object are known as /constructors/. Each constructor defines a
+class of objects - the set of objects initialized by that constructor. *Classes*
+can be thought of as subtypes of the object type. In addition to the *Array* and
+*Function* classes, core JavaScript defines three other useful classes. The
+*Date* class represents dates, the *RegExp* class represents regular expressions
+and the *Error* class represents syntax and runtime errors. You can define your
+own classes of objects by defining appropriate constructor functions.
+
+The JavaScript interpreter performs /automatic garbage collection/ for memory
+management.
+JavaScritp is an object-oriented language. It means that rather than having
+globally defined functions to operate on values of various types, the types
+themselves define /methods/ for working with values. Only JavaScript objects
+have methods. But numbers, strings, boolean values behave as if they had method.
+In JavaScript, /null/ and /undefined/ are the only values that methods cannot be
+invoked on.
+JavaScript variables are /untyped/. Variables are declared with the *var*
+keyword. JavaScript uses /lexical scoping/.
+*** Numbers
+    :PROPERTIES:
+    :CUSTOM_ID: numbers
+    :END:
+All numbers in JavaScript are represented as floating-point values. When a
+number appears directly in a JavaScript program, it's called a /numeric literal/
+. A minus sign makes number negative, but - is the unary negation operator and
+is not part of the numeric literal syntax.
+**** Integer Literals
+base-10, base-16, and base-8 integer literals. A hexadecimal literal begins with
+"0x" or "0X", followed by a string of hexadecimal digits. Although ECMAScript
+standard does not support hexadecimal literals, some implementations of
+JavaScript allow you to specify integer literals in octal. In the strict mode of
+ECMAScript 5, octal literals are explicitly forbidden.
+**** Floating-Point Literals
+syntax: [digits][.digits][(E|e)[(+|-)]digits]
+**** Arithmetic in JavaScript
+JavaScript programs work with numbers using the arithmetic operators that the
+language provides. In addition to basic arithmetic operators, JavaScript
+supports more complex mathematical operations through a set of functions and
+constants defined as properties of the *Math* object.
+
+Arithmetic in JavaScript does not raise errors in cases of overflow, underflow,
+or division by zero.
+- Overflow :: when the result of a numeric operation is larger than the largest
+              representable number, JavaScript prints as *Infinity*; contrastly,
+              prints as *-Infinity*
+- Underflow :: when the result of a numeric operation is closer to zero than the
+               smallest representable number, JavaScript retures 0; If underflow
+               occurs from a negtive number, JavaScript returns a special value
+               known as "*negative zero*", indistinguishable from regular zero.
+- Division by zero :: division by zero is not an error in JavaScript. It simply
+     returns infinity or negtive infinity. There is one exception: zero divided
+     by zero, the result of this operation is the special not-a-number value,
+     printed as *NaN*.
+
+NaN also arises if you attempt to divide infinity by infinity, or take the squre
+root of a negative number or use arithmetic operators with non-numeric operation
+that cannot be converted to numbers. NaN does not compare equal to any other
+value, including itself. x != x will be true if and only if x is NaN.
+
+The negative zero value is also somewhat unusual. It compares equal (even using
+JavaScript's strict equality test) to positive zero, except when used as a
+divisor.
+**** Binary Floating-Point and Rounding Errors
+The IEEE-754 floating-point representation used by JavaScript is a binary
+representation, which can exactly represent fractions like 1/2, 1/8, and 1/1024.
+Unfortunately, the fractions we use most commonly are decimal fractions 1/10,
+1/100, and so on. Binary floating-point representations cannot exactly represent
+numbers as simple as 0.1.
+
+A future version of JavaScript may support a decimal numeric type that avoids
+these rounding issues. Performing critical financial calculations use scaled
+integers.
+**** Dates and Times
+Use a =Date()= constructor for creating objects that represent dates and times.
+*** Text
+    :PROPERTIES:
+    :CUSTOM_ID: text
+    :END:
+A string is an immutable ordered sequence of 16-bit values, each of which
+typically represents a Unicode character.
+**** String Literals
+Simply enclose the characters of the string within a matched single or double
+quotes. Double-quote characters may be contained within strings delimited by
+single-quote characters, and single-quote characters may be contained within
+strings delimited by double-quote characters.
+
+In ECMAScript 3, string literals must be written on a single line. In ECMAScript
+5, you can  break a string literal across multiple lines by ending each line but
+the last with a backslash.
+
+When you use single quotes to delimit your strings, you must use the backslash
+character to escape. In client-side JavaScript programming, JavaScript code may
+contain strings of HTML code may contain strings of JavaScript code. When
+combining JavaScript and HTML, it's a good idea to use one style of quotes for
+JavaScript and the other style for HTML. For example,
+#+begin_src javascript
+  <buttton onclick="alert('Thank you')">Click Me</button>
+#+end_src
+**** Escape Sequences in String Literals
+The backslash character has a special purpose for escape special characters.
+For instance, \n is an escape sequence that represents a newline character.
+\u escape represents an arbitrary Unicode character specified by four
+hexadecimal digits. \x escape represents Latin-1 encoding.
+**** Working with Strings
+Use + operator on strings, it joins them by appending the second to the first.
+Use the length property of the string to determine the length of a string -
+the number of /16-bit/ values it contains. There are many other methods working
+with strings. Remember that strings are immutable in JavaScript. Methods like
+=replace()= and =toUpperCase()= return /new/ strings!
+
+In ECMAScript 5, strings can be treated like read-only arrays, and you can
+access individual characters from a string using square brackets instead of the
+=charAt()= method.
+**** Pattern Matching
+JavaScript adopts Perl's syntax for regular expressions. Although RegExps are
+not one of the fundamental data types in the language, they do have a literal
+syntax and can be encoded directly into JavaScript programs. Text between a pair
+of slashes constitutes a regular expression literal. The second slash in the
+pair can also be followed by one or more letters, which modify the meaning of
+the pattern. RegExp objects define a number of useful methods, and strings also
+have methods that accept RegExp arguments.
+**** Boolean Values
+All objects (and arrays) convert to, and work like, *true*. *false*, and the six
+values (undefined, null, 0, -0, NaN, "") that convert to it, are sometimes
+called *falsy* values, and all other values are called *truthy*.
+#+begin_src javascript
+  if (o !== null) ... // the body of the if will be executed only if o is not null
+  if (o) ...          // the body of the if only if o is not false or any falsy value
+#+end_src
+
+Boolean values have a =toString()= method that you can use to convert them to
+the strings "true" or "false", but they do not have any other useful methods.
+Three important boolean operators: &&, ||, !
+**** null and undefined
+*null* usually used to indicate the absence of a value.
+*undefined* represents value of variables have not been initialized and the
+value you get when you query the value of an object property or array element
+that does not exist. Functions without return value or the value of function
+parameters for which no argument is supplied are return undefined.
+undefined is a predefined global variable that is initialized to the undefined
+value. In ECMAScript 5, undefined is /read-only/ in that version of the
+language.
+
+null and undefined both indicate an absence of value and can often be used
+interchangeably. The equality operator == considers them to be equal. (Use
+the strict equality operator === to distinguish them). Neither null nor
+undefined have any properties or methods. Any access a property or method
+can cause a TypeError.
+
+In other words, undefined to represent a system-level, unexpected, or error-
+like absence of value and null to represent program-level, normal, or expected
+absence of value.
