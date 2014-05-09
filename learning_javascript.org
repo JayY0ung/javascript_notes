@@ -238,7 +238,10 @@ of slashes constitutes a regular expression literal. The second slash in the
 pair can also be followed by one or more letters, which modify the meaning of
 the pattern. RegExp objects define a number of useful methods, and strings also
 have methods that accept RegExp arguments.
-**** Boolean Values
+*** Boolean Values
+    :PROPERTIES:
+    :CUSTOM_ID: booleanValues
+    :END:
 All objects (and arrays) convert to, and work like, *true*. *false*, and the six
 values (undefined, null, 0, -0, NaN, "") that convert to it, are sometimes
 called *falsy* values, and all other values are called *truthy*.
@@ -250,7 +253,10 @@ called *falsy* values, and all other values are called *truthy*.
 Boolean values have a =toString()= method that you can use to convert them to
 the strings "true" or "false", but they do not have any other useful methods.
 Three important boolean operators: &&, ||, !
-**** null and undefined
+*** null and undefined
+    :PROPERTIES:
+    :CUSTOM_ID: nullAndUndefined
+    :END:
 *null* usually used to indicate the absence of a value.
 *undefined* represents value of variables have not been initialized and the
 value you get when you query the value of an object property or array element
@@ -269,3 +275,150 @@ can cause a TypeError.
 In other words, undefined to represent a system-level, unexpected, or error-
 like absence of value and null to represent program-level, normal, or expected
 absence of value.
+*** The Global Objec
+    :PROPERTIES:
+    :CUSTOM_ID: theGlobalObject
+    :END:
+The /global object/ is a regular JavaScript object that serves a very important
+purpose: the properties of this object are the globally defined symbols that are
+available to a JavaScript program. When the JavaScript interpreter starts (or
+whenever a web browser loads a new page), it creates a /new/ global object and
+give it an initial set of properties that define.
+
+The initial properties of the global object are not reserved words, but they
+deserve to be treated as if they are.
+
+In top-level code, you can use the JavaScript keyword *this* to refer to the
+global objects.
+
+When first created, the global object defines all of JavaScript's predefined
+global values.
+*** Wrapper Objects
+    :PROPERTIES:
+    :CUSTOM_ID: wrapperObjects
+    :END:
+The temporary objects created when you access a property of a string, number, or
+boolean are known as /wrapper objects/. Once the property has been resolved, the
+newly created object is discarded. There are not wrapper objects for the null
+and undefined values.
+
+JavaScript converts wrapper objects into the wrapped primitive value as
+necessary, so the wrapper objects usually, but not always, behave just like the
+primitive values. The == equality operator treats a value and its wrapper object
+as equal, but you can distinguish them with the === strict equality operator.
+The typeof operator also can distinguish them.
+*** Immutable Primitive Values and Mutable Object References
+    :PROPERTIES:
+    :CUSTOM_ID: immutablePrimitiveValuesAndMutableObjectReferences
+    :END:
+Primitves are immutable: there is no way to change a primitive value. Primitive
+are also compared by value: two values are the same only if they have the same
+value. Strings are equal if and only if they have the same length and if the
+charactor at each index is the same.
+
+Objects are mutable: their values can change. Objects are sometimes called
+/reference types/ to distinguish them from JavaScript's primitive types. Objects
+are compared by /reference/: two object values are the same if and only if they
+/refer/ to the same underlying object. Assigning an object or array to a
+variable simply assigns the reference: it does not create a new copy of the
+object. If you want to make a new copy of an object or array, you must
+explicitly copy the properties of the object or the elements of the array.
+*** Type Conversion
+    :PROPERTIES:
+    :CUSTOM_ID: typeConversion
+    :END:
+JavaScript is very /flexible/ about the types of values it requires. The
+primitive-to-primitive conversions are relatively straightforward.
+
+Conversion to strings is well-defined for all primitive values.
+
+Conversion to numbers is juat a little trickier. Strings can be parsed as number
+convert to those numbers. Leading and trailing spaces are allowed. Any
+charactors are not part of a numeric literal cause the string-to-number
+conversion to produce *NaN*. Some numeric conversion are suprising: true
+converts to 1, and false and the empty string "" convert to 0.
+**** Conversions and Equality
+The strict equality operator === that does not perform conversions when testing
+for equality. == operator never attempts to convert its operands to booleans.
+**** Explicit Conversions
+Although JavaScript performs many type conversions automatically, you may
+sometimes need to perform an explicit conversion. The simplest way to perform an
+explicit type conversion is to use the =Boolean()=, =Number()=, =String()=
+functions.
+
+Any value other than null or undefined has a =toString()= method and the result
+of this method is usually the same as that returned by the =String()= function.
+Caution: Object(3) => new Number(3), does not throw an exception. Instead, it
+simply returns a newly created empty object.
+
+Formatting and parsing numbers are common tasks in computer programs and
+JavaScript has specialized functions and methods that provide more precise
+control over number-to-string and string-to-number conversions.
+
+The =toString()= method defined by the Number class accepts an optional argument
+that specifies a radix, or base, for the conversion (base 10 for default).
+
+When working with financial or scientific data, you may want convert numbers to
+strings in ways that give you control over the number of decimal places or the
+number of significant digits in the output. The Number class defines three
+methods for these kinds of number-to-string conversions.
+- =toFixed()= :: converts a number to string with a specified number of digits
+                 after the decimal point. It never uses exponential notation.
+- =toExponential()= :: converts a number to string using exponential notation,
+     with one digit before the decimal point and a specified number of digits
+     after the decimal point.
+- =toPrecision()= :: converts a number to string with the number of significant
+     digits you specify. It uses exponential notation if the number of
+     significant digits is not large enough to display the entire integer
+     portion of the number.
+All three methods /round/ the trailing digits or /pad with zeros/ as
+appropriate.
+
+If you pass a string to the =Number()= conversion function, it attempts to parse
+that string as an integer or floating-point literal. ONLY works for base-10
+integers and does not allow trailing characters that are not part of the
+literal.
+The =parseInt()= and =parseFloat()= are global functions, not method of any
+class. =parseInt()= parses only integers. =parseFloat()= parses both integers
+and floating-point numbers. Both =parseInt()= and =parseFloat()= skip leading
+whitespace, parse as many numeric characters as they can. If the first nonspace
+character is not part of a valid numeric literal, they return NaN.
+=parseInt()= accepts an optional second argument specifying the radix (legal
+value between 2 and 36) of the number to be parsed.
+**** Object to Primitive Conversion
+- Object-to-boolean conversion :: all objects converts to true, including
+     wrapper objects.
+- Object-to-string conversion :: only to native objects. Performed by invoking
+     a method of the object to be converted.
+- Object-to-number :: only to native objects. Performed by invoking
+     a method of the object to be converted.
+
+All objects inherit two conversion methods.
+
+The first is called =toString()=, and its job is to return a string
+representation of the object. The default =toString()= method does not return a
+very interesting value. For example,
+#+begin_src javascript
+  ({x:1, y:2}).toString()         // => "[object object]"
+#+end_src
+Many classes define more specific version of the =toString()= method.
+The =toString()= method of the /Array/ class converts each array element to a
+string and joins the resulting strings together with commas in between.
+The =toString()= method of the /Function/ class returns an
+implementation-defined representation of a function. In practice, convert user-
+defined functions to strings of JavaScript source code.
+The =toString()= method of the /Date/ class returns a human-readable date and
+time string.
+The =toString()= method of the /RegExp/ class returns a string that looks like
+a RegExp literal.
+
+The other object conversion function is called =valueOf()=. The job of the
+method is less well-defined. Objects are compound values, and most object cannot
+really be represented by a single primitive value.
+The /Wrapper/ classes define =valueOf()= methods that return the wrapped
+primitive value.
+Arrays, functions, and regular expressions simply inherit the default method.
+Calling =valueOf()= for instances of these types simply returns the object
+itself.
+The /Date/ class defines a =valueOf()= method that returns the date in its
+internal representation: the number of milliseconds since Jan. 1, 1970.
