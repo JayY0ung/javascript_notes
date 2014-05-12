@@ -422,3 +422,118 @@ Calling =valueOf()= for instances of these types simply returns the object
 itself.
 The /Date/ class defines a =valueOf()= method that returns the date in its
 internal representation: the number of milliseconds since Jan. 1, 1970.
+
+The rules on converting an object to a string:
++ If the object has a =toString()= method, JavaScript calls it. If it returns a
+  primitive value, JavaScript converts that value to a string (if it is not
+  already a string) and returns the result of that conversion.
++ If the object has no =toString()= method, or if that method does not return a
+  primitive value, then JavaScript looks for a =valueOf()= method. If the method
+  exists, JavaScript calls it. If the return value is a primitive, JavaScript
+  converts that value to a string (if it is not already) and return the
+  converted value.
++ Otherwise, JavaScript cannot obtain a primitive value from either =toString()=
+  or =valueOf()=, so it throws a TypeError.
+
+The rules on converting an object to a number: (does the same thing, but try
+the =valueOf()= method first):
++ If the object has a =valueOf()= method that returns a primitive value,
+  JavaScript converts that primitive value to a number and ruturns the result.
++ Otherwise, if the object has a =toString()= method that returns a primitive
+  value, JavaScript converts and returns the value.
++ Otherwise, JavaScript throws a TypeError.
+
+The object-to-primitive conversion used by + and == operator includes a special
+case for Date objects. The Date class is the only predefined core JavaScript
+type that define meaningful conversions to both strings and numbers. The
+object-to-primitive conversion is basically an object-to-number conversion for
+all objects that are not dates, and an bject-to-string conversion for Date
+objects. The primitive value returned by =valueOf()= or =toString()= is used
+directly without being forced to a number or string.
+The < operator and the other relational operators perform object-to-primitive
+conversions like == does, but without the special case for Date objects: any
+object is converted by trying =valueOf()= first and then =toString()=. Whatever
+primitive value is obtained is used directly.
+
+*Conclusion*: +, ==, != and the relational operators are the only ones that
+perform this special kind of string-to-primitive conversions. Other operators
+convert more explicitly to a specified type and do not have any special case
+for Date objects. For examples:
+#+begin_src javascript
+  var now = new Date;
+  typeof(now + 1)                 // "string": + converts dates to strings
+  typeof(now - 1)                 // "number": - converts dates to numbers
+  now == now.toString()           // true: implicit and explicit string conversions
+  now > (now - 1)                 // true: converts a Date to a number
+#+end_src
+*** Variable Declaration
+    :PROPERTIES:
+    :CUSTOM_ID: variableDeclaration
+    :END:
+Before you use a variable in a JavaScript program, you should /declare/ it with
+keyword /var/. You can write codes like these:
+#+begin_src javascript
+  var i;                          // declare a variable i, but not undefined
+  var sum;
+  var i, sum;                     // 3 methods for declaring variables, the same thing
+  var message = "hello";
+  var i = 0, j = 0, k = 0;        // always right
+  for(var i = 0; i < 10; i++) console.log(i);
+  for(var p in o) console.log(p); // var statement can also appear as part of the for and for/in loops
+#+end_src
+If you assign a value to an undeclared variable, JavaScript actually creates
+that variable as a property of the global object. (Bad habit and a source of
+bug)
+*** Variable Scope
+    :PROPERTIES:
+    :CUSTOM_ID: variableScope
+    :END:
+The /scope/ of a variable is the region of your program source code in which it
+is defined.
+A /global/ variable has global scope, the /local/ variable has local scope.
+Function parameters also count as local variables and are defined only within
+the body of the function. You /must/ always use var to declare local variables.
+JavaScript uses *function* scope, it means that all variables declared within a
+funciton are visible /throughout/ the body of the function. Curiously, this
+means that varibles are even visible before they are declared.
+
+In programming languages with block scope, it is generally good programming
+practice to declare variables as close as possible to where they are used and
+with the narrowest possible scope. JavaScript is a function scope programming
+language, it is a good habit to declare all varibles at the top of the function
+which accurately reflect the true scope of the varaibles.
+
+When you declare a global JavaScript variable, what you are actually doing is
+defining a property of the global object. If you use var to declare the variable
+, the property that is created is /nonconfigurable/, which means it cannot be
+deleted with the delete operator. For example,
+#+begin_src javascript
+  var truevar = 1;  // a properly declared global variable, nondeletable
+  fakevar = 2;      // creates a deletable property of the global object
+  this.fakevar2 = 1;              // this does the same thing
+  delete truevar;                 // => false
+  delete fakevar;                 // => true
+  delete this.fakevar2;           // => true
+#+end_src
+Every chunk of JavaScript code (global code or functions) has a /scope chain/
+associated with it. This scope chain is a list or chain of objects that defines
+the variables that are "in scope" for that code.
+
+In top-level JavaScript code, the scope chain consists of a single object, the
+global object. In a non-nested function, the scope chain consists of two objects
+(The first is the object that defines the function's parameters and local
+variables, and the second is the global object). In a nested function, the scope
+chain has three or more objects.
+When a function is defined, it stores the scope chain then in effect. When that
+function is invoked, it creates a /new/ object to store its local variables, and
+adds that new object to the stored scope chain to create a new, longer, chain
+that represents the scope for that function invocation. This becomes more
+interesting for nested functions because each time the outer function is called,
+the inner function is defined again. Since the scope chain differs on each
+invocation of the outer function, the inner function will be subtly different
+each time it is defined.
+
+Two great article on execution context and scope chain. [From David Sherif]
+Links:
+[[http://davidshariff.com/blog/what-is-the-execution-context-in-javascript/][What is the Execution Context & Stack in JavaScript?]]
+[[http://davidshariff.com/blog/javascript-scope-chain-and-closures/][Identifier Resolution and Closures in the JavaScript Scope Chain]]
