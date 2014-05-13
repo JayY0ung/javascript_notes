@@ -537,3 +537,42 @@ Two great article on execution context and scope chain. [From David Sherif]
 Links:
 [[http://davidshariff.com/blog/what-is-the-execution-context-in-javascript/][What is the Execution Context & Stack in JavaScript?]]
 [[http://davidshariff.com/blog/javascript-scope-chain-and-closures/][Identifier Resolution and Closures in the JavaScript Scope Chain]]
+** Expressions and Operators
+   :PROPERTIES:
+   :CUSTOM_ID: expressionsAndOperators
+   :END:
+*** Property Access Expressions
+    :PROPERTIES:
+    :CUSTOM_ID: propertyAccessExpressions
+    :END:
+A property access expression evaluates to the value of an object property or an
+array element. JavaScript defines two syntaxes for property access:
+=expression.identifier= or =expression[expression]= With either type of property
+access expression, the expression before the . or [ is first evaluated. If the
+value is null or undefined, the expression throws a TypeError.
+
+The .identifier syntax is the simpler of the two property access options, but
+notice that it can only be used when the property you want to access has a name
+that is *a legal identifier*, and when you know the name when you write code. If
+the property name is /a reserved word/ or /includes spaces or punctuation
+characters/, or when it is /a number/, you must use the square bracket notation.
+Square brackets are also used when the property name is /not static/ but is
+itself the result of a computation.
+*** Invocation Expressions
+    :PROPERTIES:
+    :CUSTOM_ID: invocationExpressions
+    :END:
+An /invocation expression/ JavaScript's syntax for calling a function or method.
+When an invocation expression is evaluated, the function expression is evaluated
+first, and then the argument expressions are evaluated to produce a list of
+argument values. If the value of the function expression is not a callable
+object, a TypeError is thrown. If the function uses a return statement to return
+a value, then that value becomes the value of the invocation expression.
+Otherwise, the value of the invocation expression is *undefined*.
+Every invocation expression includes a pair of parentheses and an expression
+before the open parenthesis. If that expression is a property access expression,
+then the invocation is known as a /method invocation/. In method invocation, the
+object or array that is the subject of the property access becomes the value of
+the /this/ parameter while the body of the function is being executed.
+Invocation expressions that are not method invocations normally use the global
+object as the value of the this keyword.
