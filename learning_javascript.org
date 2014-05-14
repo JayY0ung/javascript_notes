@@ -447,7 +447,7 @@ The object-to-primitive conversion used by + and == operator includes a special
 case for Date objects. The Date class is the only predefined core JavaScript
 type that define meaningful conversions to both strings and numbers. The
 object-to-primitive conversion is basically an object-to-number conversion for
-all objects that are not dates, and an bject-to-string conversion for Date
+all objects that are not dates, and an object-to-string conversion for Date
 objects. The primitive value returned by =valueOf()= or =toString()= is used
 directly without being forced to a number or string.
 The < operator and the other relational operators perform object-to-primitive
@@ -576,3 +576,132 @@ object or array that is the subject of the property access becomes the value of
 the /this/ parameter while the body of the function is being executed.
 Invocation expressions that are not method invocations normally use the global
 object as the value of the this keyword.
+*** Operator Overview
+    :PROPERTIES:
+    :CUSTOM_ID: operatorOverview
+    :END:
+Note that most operators are represented by punctuation characters. Some,
+however, are represented by keywords such as /delete/ and /instanceof/. Keywords
+operators are regular operators.
+**** Number of Operands
+Operators can be categorized based on the number of operands they expect. Most
+JavaScript operators are /binary operators/. JavaScript also supports a number
+of /unary operators/. Finally, it supports one /ternary operator/, the
+conditional operator =? :=, which combines three expressions into a single
+expression.
+**** Operand and Result Type
+Some operators work on values of any type, but most expect their operands to be
+of a specific type, and most operators return a value of a specific type.
+
+JavaScript operators usually convert the type of their operands as needed.
+Remember also that every JavaScript value is either "truthy" or "falsy", so
+operators that expect boolean operands will work with an operand of any type.
+
+Some operators behave differently depending on the type of the operands used
+with them.
+**** Operator Side Effects
+Some operands like (=, ++, --, delete) have /side effect/. No other JavaScript
+operators have side effects, but function invocation and object creation
+expressions will have side effects if any of the operators used in the function
+or constructor body have side effects.
+**** Order of Evaluation
+Operator precedence and associativity specify the order in which operations are
+performed in a complex expression, but they do not specify the order in which
+the subexpressions are evaluated.
+*** Arithmetic Expressions
+    :PROPERTIES:
+    :CUSTOM_ID: arithmeticExpressions
+    :END:
+The basic arithmetic operators are (*, /, %, +, -). They evaluate their operands
+, convert the values to numbers if necessary. Non-numeric operands that cannot
+convert to numbers convert to the NaN value. If either operand is NaN, the
+result of the operation is also NaN.
+In JavaScript, all numbers are floating-point. Division by zero yields positive
+or negative infinity, while 0/0 evaluates to NaN: neither of these cases raises
+an error.
+The sign of the result of the % operator is the same as the sign of the first
+operand.
+**** The + Operator
+If either of the operands is a string or an object that converts to a string,
+the other operand is converted to a string and concatenation is performed.
+Addition is performed only if neither operand is string-like.
+*Caution*: null -> number  // => 0; undefined -> number // => NaN
+It is important to note that when the + operator is used with strings and
+numbers, it may not be associative. That is, the result may depend on the order
+in which operations are performed. For example,
+#+begin_src javascript
+  1 + 2 + " blind mice"           // => "3 blind mice"
+  1 + (2 + " blind mice")         // => "12 blind mice"
+#+end_src
+**** Unary Arithmetic Operators
+In JavaScript, the unary operators all have high precedence and are all right-
+associative. The arithmetic unary operators convert their single operand to a
+number, if necessary. Increment operators (both ++ and --) have lvalue operand.
+Note that the expression ++x is not always the same as x = x + 1.
+*** Relational Expressions
+    :PROPERTIES:
+    :CUSTOM_ID: relationalExpressions
+    :END:
+The == operator checks whether its two operands are equal, allowing type
+conversion.
+The strict equality === operator evaluates its operands, and then compare the
+two values as follows, performing no type conversion.
+Conclusion: Both the + operator and the comparison operators behave differently
+for numeric and string operands. + favors strings: it performs concatenation if
+either operand is a string. The comparison operators favor numbers and only
+perform string comparison if both operands are strings.
+**** The in Operator
+The /in/ operator expects a left-hand operand that is or can be converted to a
+string. It expects a right-hand operand that is an object. It evaluates to true
+if the left-hand value is the name of a property of the right-hand object.
+**** The instanceof Operator
+The /instanceof/ operator expects a left-hand operand that is an object and a
+right-hand operand that identifies a class of objects. The operator evaluates to
+true if the left-hand object is an instance of the right-hand class.
+If the left-hand operand of /instanceof/ is not an object, /instanceof/ returns
+false. If the right-hand side is not a function, it throws a TypeError.
+*** Logical Expressions
+    :PROPERTIES:
+    :CUSTOM_ID: logicalExpressions
+    :END:
+**** Logical And (&&)
+The && operator can be understood at three different levels.
+1. when used with boolean operands, it returns true if and only if both its
+   operand and its second operand are true.
+2. && does not require that its operands be boolean values. The && operator can
+   understand truthy and falsy values. If both operands are truthy, the operator
+   returns a truthy value, otherwise, a falsy value.
+3. This operator starts by evaluating its first operand, the expression on its
+   left. If the value on the left is falsy, so && simply returns the value on
+   the left and does not even evaluate the expression on the right. If the value
+   on the left is truthy, then the overall value of the expression depends on
+   the value on the righ-hand side.
+
+In general, you must be careful whenever you write an expression with side
+effects on the right-hand side of &&. Whether those side effects occur depends
+on the value of the left-hand side.
+**** Logical Or (||)
+Like && operator. It starts by evaluating its first operand, the expression on
+its left. If the value of this first operand is truthy, it returns that truthy
+value. Otherwise, it evaluates its second operand, the expression on its right,
+and returns the value of that expression.
+**** Logical NOT (!)
+Unlike the && and || operators, the ! operator converts its operand to a boolean
+value before inverting the converted value. This means that ! always returns
+true or false, and you can convert any value x to its equivalent boolean value
+by applying this operator twice: !!x
+**** The delete Operator
+/delete/ is an unary operator that attempts to delete the object property or
+array element specified as its operand. Deleting an array element leaves a
+"hole" in the array and does not change the array's length. The resulting array
+is sparse.
+/delete/ expects its operand to be an lvalue. If it is not an lvalue, the
+operator takes no action and returns true. Not all properties can be deleted.
+Some built-in core and client-side properties are immune from deletion, and user
+-defined variables declared with the var statement cannot be deleted. Functions
+defined with the function statement and declared function parameters can not be
+deleted either.
+
+In ECMAScript 5 strict mode, /delete/ raises a SyntaxError if its operand is an
+unqualified identifier. Also specifies that /delete/ raises a syntaxError if
+asked to delete any nonconfigurable property.
