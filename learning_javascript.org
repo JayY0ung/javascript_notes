@@ -18,17 +18,17 @@ Main structure of the book.
    :PROPERTIES:
    :CUSTOM_ID: coreJavascript
    :END:
-This is the lowest level of JavaScript including Lexical Structure, Types,
+This is the lowest level of Java-Script including Lexical Structure, Types,
 Values, Variables, Expressions and Operators, Statements, Objects, Arrays,
 Functions, Classes and Modules, Pattern Matching with Regular Expressions,
-JavaScript Subsets and Extensions.
+Java-Script Subsets and Extensions.operation
 ** Client-Side JavaScript
    :PROPERTIES:
    :CUSTOM_ID: clientSideJavascript
    :END:
 Client-Side JavaScript does not exhibit the nonlinear cross-reference problem
 nearly to the extent that the core language does, and it is possible to learn
-how to use JavaScritp in web browsers in a fairly linear sequence.
+how to use JavaScript in web browsers in a fairly linear sequence.
 * Getting Started
   :PROPERTIES:
   :CUSTOM_ID: gettingStarted
@@ -62,7 +62,7 @@ may appear in comments, but not interpreted as Unicode.
     :END:
 Two styles of comments:
 1. Any text between a // and the end of a line.
-2. Any text between the charaters /* and */, these comments may span multiple
+2. Any text between the characters /* and */, these comments may span multiple
    lines but may not be nested.
 *** Literals
     :PROPERTIES:
@@ -73,8 +73,8 @@ A literal is a data value that appears directly in a program.
     :PROPERTIES:
     :CUSTOM_ID: identifiers
     :END:
-A JavaScript identifier must begin with a letter, an underscore, or a dollor
-sign. Subsequent characters can be letters, digits, underscores, or dollor sign.
+A JavaScript identifier must begin with a letter, an underscore, or a dollar
+sign. Subsequent characters can be letters, digits, underscores, or dolor sign.
 Digits are /not/ allowed as the first character.
 
 JavaScript reserves a number of identifiers as the keywords of the language
@@ -112,7 +112,7 @@ And types with methods and types without. Also, *mutable* and *immutable* types.
 JavaScript object is an unordered collection of named values. The language
 defines a special kind of object - /array/ that represents an ordered collection
 of numbered values. Another special kind of object is a /function/ which has
-excutable code associated with it. The most important thing about functions in
+executable code associated with it. The most important thing about functions in
 JavaScript is that they are true values and JavaScript programs can treat them
 like regular objects.
 
@@ -122,12 +122,12 @@ class of objects - the set of objects initialized by that constructor. *Classes*
 can be thought of as subtypes of the object type. In addition to the *Array* and
 *Function* classes, core JavaScript defines three other useful classes. The
 *Date* class represents dates, the *RegExp* class represents regular expressions
-and the *Error* class represents syntax and runtime errors. You can define your
+and the *Error* class represents syntax and run-time errors. You can define your
 own classes of objects by defining appropriate constructor functions.
 
 The JavaScript interpreter performs /automatic garbage collection/ for memory
 management.
-JavaScritp is an object-oriented language. It means that rather than having
+JavaScript is an object-oriented language. It means that rather than having
 globally defined functions to operate on values of various types, the types
 themselves define /methods/ for working with values. Only JavaScript objects
 have methods. But numbers, strings, boolean values behave as if they had method.
@@ -163,15 +163,15 @@ or division by zero.
               representable number, JavaScript prints as *Infinity*; contrastly,
               prints as *-Infinity*
 - Underflow :: when the result of a numeric operation is closer to zero than the
-               smallest representable number, JavaScript retures 0; If underflow
-               occurs from a negtive number, JavaScript returns a special value
+               smallest representable number, JavaScript returns 0; If underflow
+               occurs from a negative number, JavaScript returns a special value
                known as "*negative zero*", indistinguishable from regular zero.
 - Division by zero :: division by zero is not an error in JavaScript. It simply
-     returns infinity or negtive infinity. There is one exception: zero divided
+     returns infinity or negative infinity. There is one exception: zero divided
      by zero, the result of this operation is the special not-a-number value,
      printed as *NaN*.
 
-NaN also arises if you attempt to divide infinity by infinity, or take the squre
+NaN also arises if you attempt to divide infinity by infinity, or take the square
 root of a negative number or use arithmetic operators with non-numeric operation
 that cannot be converted to numbers. NaN does not compare equal to any other
 value, including itself. x != x will be true if and only if x is NaN.
@@ -275,7 +275,7 @@ can cause a TypeError.
 In other words, undefined to represent a system-level, unexpected, or error-
 like absence of value and null to represent program-level, normal, or expected
 absence of value.
-*** The Global Objec
+*** The Global Object
     :PROPERTIES:
     :CUSTOM_ID: theGlobalObject
     :END:
@@ -311,10 +311,10 @@ The typeof operator also can distinguish them.
     :PROPERTIES:
     :CUSTOM_ID: immutablePrimitiveValuesAndMutableObjectReferences
     :END:
-Primitves are immutable: there is no way to change a primitive value. Primitive
+Primitives are immutable: there is no way to change a primitive value. Primitive
 are also compared by value: two values are the same only if they have the same
 value. Strings are equal if and only if they have the same length and if the
-charactor at each index is the same.
+character at each index is the same.
 
 Objects are mutable: their values can change. Objects are sometimes called
 /reference types/ to distinguish them from JavaScript's primitive types. Objects
@@ -332,11 +332,12 @@ primitive-to-primitive conversions are relatively straightforward.
 
 Conversion to strings is well-defined for all primitive values.
 
-Conversion to numbers is juat a little trickier. Strings can be parsed as number
+Conversion to numbers is just a little trickier. Strings can be parsed as number
 convert to those numbers. Leading and trailing spaces are allowed. Any
-charactors are not part of a numeric literal cause the string-to-number
-conversion to produce *NaN*. Some numeric conversion are suprising: true
-converts to 1, and false and the empty string "" convert to 0.
+characters are not part of a numeric literal cause the string-to-number
+conversion to produce *NaN*. Some numeric conversion are surprising: true
+converts to 1, and false and  the empty string "" convert to 0, null converts to
+0, undefined converts to NaN.
 **** Conversions and Equality
 The strict equality operator === that does not perform conversions when testing
 for equality. == operator never attempts to convert its operands to booleans.
@@ -381,7 +382,7 @@ literal.
 The =parseInt()= and =parseFloat()= are global functions, not method of any
 class. =parseInt()= parses only integers. =parseFloat()= parses both integers
 and floating-point numbers. Both =parseInt()= and =parseFloat()= skip leading
-whitespace, parse as many numeric characters as they can. If the first nonspace
+white-space, parse as many numeric characters as they can. If the first non-space
 character is not part of a valid numeric literal, they return NaN.
 =parseInt()= accepts an optional second argument specifying the radix (legal
 value between 2 and 36) of the number to be parsed.
@@ -438,7 +439,7 @@ The rules on converting an object to a string:
 The rules on converting an object to a number: (does the same thing, but try
 the =valueOf()= method first):
 + If the object has a =valueOf()= method that returns a primitive value,
-  JavaScript converts that primitive value to a number and ruturns the result.
+  JavaScript converts that primitive value to a number and returns the result.
 + Otherwise, if the object has a =toString()= method that returns a primitive
   value, JavaScript converts and returns the value.
 + Otherwise, JavaScript throws a TypeError.
@@ -494,14 +495,14 @@ A /global/ variable has global scope, the /local/ variable has local scope.
 Function parameters also count as local variables and are defined only within
 the body of the function. You /must/ always use var to declare local variables.
 JavaScript uses *function* scope, it means that all variables declared within a
-funciton are visible /throughout/ the body of the function. Curiously, this
-means that varibles are even visible before they are declared.
+function are visible /throughout/ the body of the function. Curiously, this
+means that variables are even visible before they are declared.
 
 In programming languages with block scope, it is generally good programming
 practice to declare variables as close as possible to where they are used and
 with the narrowest possible scope. JavaScript is a function scope programming
-language, it is a good habit to declare all varibles at the top of the function
-which accurately reflect the true scope of the varaibles.
+language, it is a good habit to declare all variables at the top of the function
+which accurately reflect the true scope of the variables.
 
 When you declare a global JavaScript variable, what you are actually doing is
 defining a property of the global object. If you use var to declare the variable
@@ -533,7 +534,7 @@ the inner function is defined again. Since the scope chain differs on each
 invocation of the outer function, the inner function will be subtly different
 each time it is defined.
 
-Two great article on execution context and scope chain. [From David Sherif]
+Two great article on execution context and scope chain. [From David Shariff]
 Links:
 [[http://davidshariff.com/blog/what-is-the-execution-context-in-javascript/][What is the Execution Context & Stack in JavaScript?]]
 [[http://davidshariff.com/blog/javascript-scope-chain-and-closures/][Identifier Resolution and Closures in the JavaScript Scope Chain]]
@@ -607,7 +608,7 @@ or constructor body have side effects.
 **** Order of Evaluation
 Operator precedence and associativity specify the order in which operations are
 performed in a complex expression, but they do not specify the order in which
-the subexpressions are evaluated.
+the sub-expressions are evaluated.
 *** Arithmetic Expressions
     :PROPERTIES:
     :CUSTOM_ID: arithmeticExpressions
@@ -675,7 +676,7 @@ The && operator can be understood at three different levels.
    left. If the value on the left is falsy, so && simply returns the value on
    the left and does not even evaluate the expression on the right. If the value
    on the left is truthy, then the overall value of the expression depends on
-   the value on the righ-hand side.
+   the value on the right-hand side.
 
 In general, you must be careful whenever you write an expression with side
 effects on the right-hand side of &&. Whether those side effects occur depends
