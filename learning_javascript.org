@@ -706,3 +706,110 @@ deleted either.
 In ECMAScript 5 strict mode, /delete/ raises a SyntaxError if its operand is an
 unqualified identifier. Also specifies that /delete/ raises a syntaxError if
 asked to delete any nonconfigurable property.
+** Statements
+   :PROPERTIES:
+   :CUSTOM_ID: statements
+   :END:
+Expressions are evaluated to produce a value, but statements are executed to
+make something happen (create side effects).
+*** Declaration Statements
+    :PROPERTIES:
+    :CUSTOM_ID: declarationStatements
+    :END:
+**** function
+#+begin_src javascript
+  var f = function(x) { return x+1; }; // Expression assigned to a variable
+  function f(x) { return x+1; }        // Statement includes variable name
+#+end_src
+Function declaration statements may appear in top-level JavaScript code, or they
+may be nested within other functions. When nested, however, function
+declarations only appear at the top level of the function they are nested
+within.
+Function declaration statements diff from function definition expressions in
+that they include a function name. Both forms create a new function objects,
+but the function declaration statement also declares the function name as a
+variable and assigns the function object to it. Like variables declared with
+/var/, function defined with function definition statements are implicitly
+"hoisted" to the top of the containing script or function, so that they are
+visible throughout the script or function. With /var/, *only* the variable
+declaration is hoisted - the variable initialization code *remains* where you
+place it. This means that you can invoke a JavaScript function before you
+declare it.
+*** Conditionals
+    :PROPERTIES:
+    :CUSTOM_ID: conditionals
+    :END:
+**** switch
+ECMAScript standard allows each /case/ to be followed by an arbitrary
+/expression/. The /switch/ statement first evaluates the expression that follows
+the /switch/ keyword and then evaluates the /case/ expressions, in the order in
+which they appear, until it finds a value that matches (use strict compare).
+Because not all of the /case/ expressions are evaluated each time the /switch/
+statement is executed, you should avoid using /case/ expressions that contain
+side effects. The safest course is simply to limit your /case/ expressions to
+constant expressions.
+*** Loops
+    :PROPERTIES:
+    :CUSTOM_ID: loops
+    :END:
+**** do/while
+The do/while loop is executed at least once, and requires both do keyword and
+the while keyword. Also, the do loop must always be terminated with a semicolon.
+**** for/in
+A for/in loop looks like this:
+#+begin_src javascript
+  for (variable in object)
+    statement
+#+end_src
+/variable/ must be a lvalue, /object/ is an expression that evaluates to an
+object.
+To execute a for/in statement, the JavaScript interpreter first evaluates the
+object expression. If it evaluates to null or undefined, the interpreter skips
+the loop and moves to the next statements. If it evaluates to a primitive value,
+that value is converted to its equivalent wrapper object. Otherwise, an object.
+The interpreter now executes the body of the loop once for each enumerable
+property of the object. Before each iteration, however, the interpreter
+evaluates the variable expression and assigns the name of the property to it.
+
+The for/in loop does not actually enumerate all properties of an object, only
+the /enumerable/ properties. The various built-in methods defined by core
+JavaScript are not enumerable. In addition to built-in methods, many other
+properties of the built-in objects are non-enumerable. All properties and method
+defined by your code are enumerable.
+*** Jumps
+    :PROPERTIES:
+    :CUSTOM_ID: jumps
+    :END:
+The /break/ statement makes the interpreter jump to the end of a loop or other
+statement. /continue/ makes the interpreter skip the rest of the body of a loop
+and jump back to the top of a loop to begin a new iteration.
+JavaScript allows statements to be named, or labeled, and the break and continue
+can identify the target loop or other statement label.
+
+The /return/ statement makes the interpreter jump from a function invocation
+back to the code invoked it and also supplies the value for the invocation. The
+/throw/ statement raises, or "throws," an exception and is designed to work with
+the try catch finally statement.
+**** Labeled Statements
+It is only useful to label statements that have bodies, such as loops and
+conditionals. /break/ and /continue/ are the only JavaScript statements that use
+statement labels. You can use the same identifier as a statement label and as a
+variable or function name. A statement may not have the same label as a
+statement that contains it. Any statement may have multiple labels.
+**** break
+The /break/ statement causes the innermost enclosing loop or switch statement to
+exit immediately. This form of the /break/ statement is legal only if it appears
+inside one of these statements.
+
+When you want to break out of a statement that is not the nearest enclosing loop
+or a switch you need the labeled form of the /break/ statement. You cannot label
+a function definition statement.
+**** continue
+Similar to the break statement, in both its labeled and unlabeled forms, can be
+used only within the body of a loop.
+**** return
+A return statement may appear only within the body of a function. A function
+returns to its caller when a return statement is executed, even if there are
+other statements remaining in the function body. If there is no return
+statement, /undefined/ is returned.
+**** throw
