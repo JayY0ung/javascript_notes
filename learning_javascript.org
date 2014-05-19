@@ -813,3 +813,138 @@ returns to its caller when a return statement is executed, even if there are
 other statements remaining in the function body. If there is no return
 statement, /undefined/ is returned.
 **** throw
+To throw an exception is to signal an error or exceptional condition when some
+sort of exceptional condition or error has occurred.
+The /throw/ statement has the following syntax:
+#+begin_src javascript
+  throw expression;               // throw statement
+#+end_src
+expression may evaluate to a value of any type. You might throw a number that
+represents an error code or a string that contains a human-readable error
+message. The Error class and its subclasses are also used when the JavaScript
+interpreter itself throws an error.
+**** try catch finally
+The try catch finally statement is JavaScript's exception handling mechanism.
+The following code illustrates the syntax and purpose of the try catch finally
+statement:
+#+begin_src javascript
+  try {
+    // Normally, this code runs from the top of the block to the bottom
+    // without problems. But it can sometimes throw an exception,
+    // either directly, with a throw statement, or indirectly, by calling
+    // a method that throws an exception.
+    }
+  catch (e) {
+    // The statements in this block are executed if, and only if, the try
+    // block throws an exception. These statements can use the local variable
+    // to refer to the Error object or other value that was thrown.
+    // This block may handle the exception somehow, may ignore the
+    // exception by doing nothing, or may rethrow the exception with throw.
+    }
+  finally {
+    // This block contains statements that are always executed, regardless of
+    // what happens in the try block. They are executed whether the try block
+    // terminates:
+    // 1) normally, after reaching the bottom of the block
+    // 2) because of a break, continue, or return statement
+    // 3) with an exception that is handled by a catch clause above
+    // 4) with an uncaught exception that is still propagating
+    }
+#+end_src
+The /catch/ keyword is followed by an identifier in parentheses. This identifier
+is like a function parameter. When an exception is caught, the value associated
+with the exception (an Error object, for example) is assigned to this parameter.
+Unlike regular variables, the identifier associated with a /catch/ clause has
+*block scope* - it is only defined within the /catch/ block.
+
+The /finally/ clause is guaranteed to be executed if any portion of the /try/
+block is executed, regardless of how the code in the /try/ block completes. It
+is generally used to clean up after the code in the /try/ clause.
+*The rules of /finally/ execution order*:
+In the normal case, the JavaScript interpreter reaches the end of the /try/
+block and then proceeds to the /finally/ block, which performs any necessary
+cleanup. If the interpreter left the /try/ block because of a /return/,
+/continue/, or /break/ statement, the /finally/ block is executed before the
+interpreter jumps to its new destination.
+If an exception occurs in the /try/ block and there is an associated /catch/
+block to handle the exception, the interpreter first executes the /catch/ block
+and then the /finally/ block. If there is no local /catch/ block to handle the
+exception, the interpreter first executes the /finally/ block and then jumps to
+the nearest containing /catch/ clause.
+If a /finally/ block itself causes a jump with a /return/, /continue/, /break/,
+or /throw/ statement, or by calling a method that throws an exception, the
+interpreter abandons whatever jump was pending and performs the new jump.
+*** Miscellaneous Statements
+    :PROPERTIES:
+    :CUSTOM_ID: miscellaneousStatements
+    :END:
+**** with
+The /with/ statement is used to temporarily extend the scope chain. It has the
+following syntax:
+#+begin_src javascript
+  with (object)
+    statement
+#+end_src
+This statement adds /object/ to the front of the scope chain, executes
+/statement/, and then restores the scope chain to its original state. The /with/
+statement is forbidden in strict mode and should be deprecated. Please avoid
+using it whenever possible.
+The common use of the /with/ statement is to make it easier to work with deeply
+nested object hierarchies. A /with/ statement provides a shortcut for reading
+properties of o, but not for creating new properties of o. Keep in mind that the
+scope chain is used only when looking up identifiers, not when creating new
+ones.
+**** debugger
+In practice, the /debugger/ statement acts like a breakpoint: execution of
+JavaScript code stops and you can use the debugger to print variables' values,
+examine the call stack, and so on. For example:
+#+begin_src javascript
+  // When f() is called with no argument, execution will stop, and you
+  // can use the debugger to inspect the call stack and find out where
+  // this incorrect call is coming from.
+  function f(o) {
+    if (o === undefined) debugger;
+    ...
+    }
+#+end_src
+**** "use strict"
+"use strict" is a /directive/ introduced in ECMAScript 5. Directives are not
+statements. It can appear only at the start of a script or at the start of a
+function body, before any real statements have appeared.
+Strict code is executed in /strict mode/. The strict mode of ECMAScript 5 is
+a restricted subset of the language that fixes a few important language
+deficiencies and provides stronger error checking and increased security.
+The three particularly important differences between strict mode and non-strict
+mode are the following:
+1. The /with/ statement is not allowed in strict mode
+2. In strict mode, all variables must be declared
+3. In strict mode, functions invoked as functions have a /this/ value of
+   /undefined/. Can be used to determine whether an implementation supports
+   strict mode:
+#+begin_src javascript
+  var hasStrictMode = (function() { "use strict"; return this === undefined }());
+#+end_src
+Other differences:
++ In strict mode, assignments to non-writable properties and attemps to create
+  new properties on non-extensible objects throw a TypeError. (In non-strict
+  mode, these attempts fail silently.)
++ In strict mode, code passed to =eval()= cannot declare variables or define
+  functions in the caller's scope as it can in non-strict mode. Instead,
+  variable and function definitions live in a new scope created for the =eval()=
+  . This scope is discarded when the =eval()= returns.
++ In strict mode, the /arguments/ object in a function holds a static copy of
+  the values passed to the function. In non-strict mode, the /arguments/ object
+  has "magical" behavior in which elements of the array and named function
+  parameters both refer to the same value.
++ In strict mode, a SyntaxError is thrown if the /delete/ operator is followed
+  by an unqualified identifier such as a variable, function, or function
+  parameter.
++ In strict mode, an attempt to delete a non-configurable property throws a
+  TypeError.
++ In strict mode, it is a syntax error for an object literal to define two or
+  more properties by the same name and for a function declaration to have two or
+  more parameters with the same name.
++ In strict mode, octal integer literals are not allowed.
++ In strict mode, the identifier /eval/ and /arguments/ are treated like
+  keywords, and you are not allowed to change their value.
++ In strict mode, the ability to examine the call stack is restricted.
