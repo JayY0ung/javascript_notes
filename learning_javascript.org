@@ -213,7 +213,7 @@ contain strings of HTML code may contain strings of JavaScript code. When
 combining JavaScript and HTML, it's a good idea to use one style of quotes for
 JavaScript and the other style for HTML. For example,
 #+begin_src javascript
-  <buttton onclick="alert('Thank you')">Click Me</button>
+  <button onclick="alert('Thank you')">Click Me</button>
 #+end_src
 **** Escape Sequences in String Literals
 The backslash character has a special purpose for escape special characters.
