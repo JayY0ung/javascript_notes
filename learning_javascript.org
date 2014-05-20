@@ -29,7 +29,7 @@ Java-Script Subsets and Extensions.operation
 Client-Side JavaScript does not exhibit the nonlinear cross-reference problem
 nearly to the extent that the core language does, and it is possible to learn
 how to use JavaScript in web browsers in a fairly linear sequence.
-* Getting Started
+* Getting StartedS
   :PROPERTIES:
   :CUSTOM_ID: gettingStarted
   :END:
@@ -948,3 +948,185 @@ Other differences:
 + In strict mode, the identifier /eval/ and /arguments/ are treated like
   keywords, and you are not allowed to change their value.
 + In strict mode, the ability to examine the call stack is restricted.
+** Objects
+   :PROPERTIES:
+   :CUSTOM_ID: objects
+   :END:
+An object is an unordered collection of properties, each of which has a name and
+a value. Property names are strings, so we can say that objects map strings to
+values. An object is more than a simple string-to-value map. In addition to
+maintaining its own set of properties, a JavaScript object also inherits the
+properties of another object, known as its "prototype".
+
+Objects are mutable and are manipulated by reference rather than by value. The
+most common things to do with objects are create them and to set, query, delete,
+test, and enumerate their properties.
+
+A /property/ has a name and a value. A property name may be any string,
+including the empty string, but no object may have two properties with the same
+name. The value may be any JavaScript value, or (in ECMAScript 5) it may be a
+getter or a setter function (or both). In addition to its name and value, each
+property has associated values that are called /property attributes/:
+1. The /writable/ attribute specifies whether the value of the property can be
+   set.
+2. The /enumerable/ attribute specifies whether the property name is returned by
+   a =for/in= loop.
+3. The /configurable/ attribute specifies whether the property can be deleted
+   and whether its attributes can be altered.
+Every object has three associated /object attributes/:
+1. An object's /prototype/ is a reference to another object from which
+   properties are inherited.
+2. An object's /class/ is a string that categorizes the type of an object.
+3. An object's /extensible/ flag specifies whether new properties may be added
+   to the object.
+
+Distinguish among three broad categories of JavaScript objects and two types of
+properties:
++ A /native/ object is an object or class of objects defined by the ECMAScript 5
+  specification. Arrays, functions, dates, and regular expressions are native
+  objects.
++ A /host/ object is an object defined by the host environment within which the
+  JavaScript interpreter is embedded.
++ A /user-defined/ object is any object created by the execution of JavaScript
+  code.
++ An /own property/ is a property defined directly on an object.
++ An /inherited property/ is a property defined by an object's prototype object.
+*** Creating Objects
+    :PROPERTIES:
+    :CUSTOM_ID: creatingObjects
+    :END:
+**** Object Literals
+An /object literal/ is a commoa-separated list of colon-separated name:value
+pairs, enclosed within curly braces.
+In ECMAScript 5, reserved words may be used as property names without quoting
+except ECMAScript 3. Trailing commas are ignored in most ECMAScript 3
+implementations, but IE considers them an error.
+*NOTE* An object literal is an expression that creates and initializes a new and
+distinct object each time it is evaluated.
+**** Creating Objects with new
+The *new* operator creates and initializes a new object. The *new* keyword must
+be followed by a function (called /constructor/) invocation.
+**** Prototypes
+Every JavaScript object has a second JavaScript object (or *null*, but this is
+rare) associated with it. This second object is known as a prototype, and the
+first object inherits properties from the prototype. All objects created by
+object literals have the same prototype object - *Object.prototype*. Objects
+created using the *new* keyword and a constructor invocation use the value of
+the *prototype* property of the constructor function as their prototype.
+*Object.prototype* is one of the rare objects that has no prototype: it does not
+inherit any properties. Linked series of prototype objects is known as a
+/prototype chain/.
+**** Object.create()
+ECMAScript 5 defines a method, =Object.create()=, that creates a new object,
+using its first argument as the prototype of that object. =Object.create()= also
+takes an optional second argument that describes the properties of the new
+object. If you want to create an ordinary empty object, pass *Object.prototype*:
+#+begin_src javascript
+  var o3 = Object.create(Object.prototype); // o3 is like {} or new Object{}
+#+end_src
+*** Querying and Setting Properties
+    :PROPERTIES:
+    :CUSTOM_ID: queryingAndSettingProperties
+    :END:
+**** Objects As Associative Arrays
+When you use the dot operator to access a property of an object, identifiers
+must be typed literally into your JavaScript program. They are not a datatype,
+so they cannot be manipulated by the program.
+When you use the [] array notation, the name of the property is expressed as a
+string. Strings are JavaScript datatypes, so they can be manipulated and created
+while a program is running. For example:
+#+begin_src javascript
+  var addr = "";
+  for(var i = 0; i < 4; i++) {
+    addr += customer["address" + i] + '\n';
+  }
+#+end_src
+Use the [] operator, because it uses a string value (which is dynamic and can
+change at run-time) rather than an identifier (which is static and must be
+hardcoded in the program) to name the property.
+#+begin_src javascript
+  function getValue(portfolio) {
+    var total = 0.0;
+    for (stock in portfolio) {
+      var shares = portfolio[stock];
+      var price = getQuote[stock];
+      total += shares * price;
+    }
+    return total;
+  }
+#+end_src
+**** Inheritance
+If the assignment is allowed, however, it always creates or sets a property in
+the original object and never modifies the prototype chain. The fact that
+inheritance occurs when querying properties but not when setting them is a key
+feature of JavaScript because it allows us to selectively override inherited
+properties.
+#+begin_src javascript
+  var unitcircle = { r:1 };       // an object to inherit from
+  var c = inherit(unitcircle);    // c inherits the property r
+  c.x = 1; c.y = 1;               // c defines two properties of its own
+  c.r = 2;                        // c overrides its inherited property
+  unitcircle.r;                   // => 1: the prototype object is not affected
+#+end_src
+There is one exception to the rule that a property assignment either fails or
+creates or sets a property in the original object. If o inherits the property x,
+and that property is an accessor property with a setter method, then that setter
+method is called rather than creating a new property x in o.
+**** Property Access Errors
+It is not an error to query a property that does not exist, but attempting to
+query a property of an object that does not exist is an error. Curiously,
+however, some failed attempts to set properties usually fail silently. In strict
+mode, any failed attempt to set a property throws a TypeError exception.
+The rules that specify when a property assignment succeeds and when it fails. An
+attempt to set a property p of an object o fails in these circumstances:
+
++ o has an own property p that is read-only (for an exception that allows
+configurable read-only properties to be set).
++ o has an inherited property p that is read-only.
++ o does not have an own property p; o does not inherit a property p with a
+  setter method, and o's *extensible* attribute is *false*. If p does not
+  already exist on o, and if there is no setter method to call, then p must be
+  added to o. But if o is not extensible, then no new properties can be defined
+  on it.
+**** Deleting Properties
+     :PROPERTIES:
+     :CUSTOM_ID: deletingProperties
+     :END:
+The *delete* operator's single operand should be a property access expression.
+*delete* does not operate on the value of the property but on the property
+itself. The *delete* operator only deletes own properties, not inherited ones.
+A *delete* expression evaluates to *true* if the delete succeeded or if the
+delete had no effect or when used with an expression that is not a property
+access expression. *delete* does not remove properties that have a
+/configurable/ attribute of *false*.
+When deleting configurable properties of the global object in strict mode, you
+must include the reference to the global object and simply follow the *delete*
+operator with the property name.
+#+begin_src javascript
+  this.x = 1;                     // create a configurable global property
+  delete x;                       // syntaxError in strict mode
+  delete this.x;                  // this works
+#+end_src
+*** Testing Properties
+    :PROPERTIES:
+    :CUSTOM_ID: testingProperties
+    :END:
+To check whether an object has a property with a given name.
+The *in* operator expects a property name on its left side and an object on its
+right. It returns *true* if the object has an own property or an inherited
+property by that name.
+The =hasOwnProperty()= method of an object tests whether that object has an own
+property with the given name. It returns *false* for inherited properties.
+The =propertyIsEnumerable()= returns *true* only if the named property is an own
+property and its *enumerable* attribute is *true*.
+*** Enumerating Properties
+    :PROPERTIES:
+    :CUSTOM_ID: enumeratingProperties
+    :END:
+Use =for/in= loop obtaining a list of all enumerable properties of an object.
+In addition to the =for/in= loop, ECMAScript 5 defines two function that
+enumerate property names.
+1. =Object.keys()= returns an array of the names of the enumerable own
+   properties of an object.
+2. =Object.getOwnPropertyNames()= returns the names of all the own properties of
+   the specified object.
