@@ -1248,3 +1248,214 @@ Object serialization is the process of converting an object's state to a string
 from which it can later be restored. ECMAScript 5 provides native functions
 =JSON.stringify()= and =JSON.parse()= to serialize and restore JavaScript
 objects.
+** Arrays
+   :PROPERTIES:
+   :CUSTOM_ID: arrays
+   :END:
+JavaScript arrays are /untyped/, /dynamic/, may be /sparse/ and every arrays
+have a *length* property. Access to numerically indexed array elements is
+generally significantly faster than access to regular object properties.
+
+Arrays inherit properties from *Array.prototype*, which defines a rich set of
+array manipulation methods. Most of these methods are /generic/, it means that
+they work correctly not only for true arrays, but for any "array-like object".
+*** Creating Arrays
+    :PROPERTIES:
+    :CUSTOM_ID: creatingArrays
+    :END:
+1. Create an array with an array literal, which is simply a comma-separated list
+   of array elements within square brackets. The value in an array literal may
+   be arbitrary expressions. Multiple commas in a row, with no value between is
+   called *sparse array*. Array elements for which values are omitted do not
+   exist, but appear to be *undefined* if you query them. Optional trailing
+   comma is allowed.
+2. Create an array with the =Array()= constructor.
+   + Call with no argument
+     #+begin_src javascript
+       var a = new Array();
+     #+end_src
+   + Call with a single numeric argument
+     #+begin_src javascript
+       var a = new Array(10);          // Specify a length, no value and array index properties are defined.
+     #+end_src
+   + Explicitly specify two or more array elements or a single non-numeric
+     element for the array
+     #+begin_src javascript
+       var a = new Array(5, 4, 3, "testing") // Using array literal is simpler than this
+     #+end_src
+*** Reading and Writing Array Elements
+    :PROPERTIES:
+    :CUSTOM_ID: readingAndWritingArrayElements
+    :END:
+What is special about arrays is that when you use property names that are
+non-negative integers less than 2^32, the array /automatically/ maintains the
+value of the length property.
+
+Note that if you index an array using numbers that are negative or that are not
+integers, the number is converted to a string, and that string is used as the
+property name. If you index an array with a string that happens to be a
+non-negative integer, it behaves as an array index, not an object property.
+*** Sparse Arrays
+    :PROPERTIES:
+    :CUSTOM_ID: sparseArrays
+    :END:
+Sparse arrays can be created with the =Array()= constructor or simply by
+assigning to an array index larger than the current array *length*
+#+begin_src javascript
+  a = new Array(5);                // No elements, but a.length is 5
+  a = [];                          // Create an array with no elements and length = 0
+  a[1000] = 0;                     // Assignment adds one element but sets length to 1001
+#+end_src
+*** Array Length
+    :PROPERTIES:
+    :CUSTOM_ID: arrayLength
+    :END:
+An array (sparse or not) will never have an element whose index is greater than
+or equal to its *length*. In order to maintain this invariant, arrays have two
+special behaviors. The first: if you assign a value to an array element whose
+index i is greater than or equal to the array's current length, the value of the
+length property is set to i+1. The second: if you set the length property to a
+non-negative integer n smaller than its current value, any array elements whose
+index is greater than or equal to n are deleted from the array.
+*** Adding and Deleting Array Elements
+    :PROPERTIES:
+    :CUSTOM_ID: addingAndDeletingArrayElements
+    :END:
+=push()= method to add one or more values to the end of an array.
+=unshift()= method to insert a value at the beginning of an array, shifting the
+existing array elements to higher indexes.
+=delete= operator deletes array element, assigning *undefined* to deleted
+element. Note that using =delete= on an array element does not alter the
+*length* property and does not shift elements with higher indexes down to fill
+in the gap that is left by the deleted property.
+*** Iterating Arrays
+    :PROPERTIES:
+    :CUSTOM_ID: iteratingArrays
+    :END:
+The ECMAScript specification allows the =for/in= loop to iterate the properties
+of an object in any order (a =for/in= loop can return the names of inherited
+properties). ECMAScript 5 defines a number of new methods for iterating array
+elements by passing each one, in index order, to a function that you define. The
+=forEach()= method is the most general of these methods.
+*** Multidimensional Arrays
+    :PROPERTIES:
+    :CUSTOM_ID: multidimensionalArrays
+    :END:
+JavaScript does not support true multidimensional arrays, but you can
+approximate them with arrays of arrays.
+*** Array Methods
+    :PROPERTIES:
+    :CUSTOM_ID: arrayMethods
+    :END:
+=Array.join()= method converts all the elements of an array to strings and
+concatenates them, returning the resulting string. An optional string separates
+the elements in the resulting string. If no separator string is specified, a
+comma is used.
+=Array.reverse()= method reverses the order of the elements of an array and
+returns the reversed array.
+=Array.sort()= method sorts the elements of an array in place and returns the
+sorted array. When it is called with no arguments, it sorts the array elements
+in alphabetical order. If an array contains undefined elements, they are sorted
+to the end of the array. To sort an array into some order other than
+alphabetical, you must pass a comparison function as an argument to
+=Array.sort()=. This function decides which of its two arguments should appear
+first in the sorted array.
+=Array.concat()= method creates and returns a /new/ array that contains the
+elements of the original followed by each of the arguments to =concat()=. Note
+that it does not recursively flatten arrays of arrays.
+=Array.slice()= method returns a slice, or subarray, of the specified array. Its
+two arguments specify the start and end (not including) of the slice to be
+returned. =slice()= does not modify the array on which it is invoked.
+=Array.splice()= method is a general-purpose method for inserting or removing
+elements from an array. The first arguments to =splice()= specifies the array
+position at which the insertion and/or deletion is to begin. The second
+argument specifies the number of elements that should be deleted from the array.
+If the second argument is omitted, all array elements from the start element to
+the end of the array are removed. It returns an array of the deleted elements.
+The first two arguments to =splice()= specify which array elements are to be
+deleted. These arguments may be followed by any number of additional arguments
+that specify elements to be inserted into the array, starting at the position
+specified by the first argument. For example,
+#+begin_src javascript
+  var a = [1, 2, 3, 4, 5, 6, 7, 8];
+  a.splice(4);                    // Returns [5, 6, 7, 8], a is [1, 2, 3, 4]
+  a.splice(1, 2);                 // Returns [2, 3], a is [1, 4]
+  var b = [1, 2, 3, 4, 5];
+  b.splice(2, 0, 'a', 'b');       // Returns []; b is [1, 2, 'a', 'b', 3, 4, 5]
+  b.splice(2, 2, [1, 2], 3);      // Returns ['a', 'b'], b is [1, 2, [1, 2], 3, 3, 4, 5]
+#+end_src
+=push()= method appends one or more new elements to the end of an array and
+returns the new length of the array.
+=pop()= method deletes the last element of an array, decrements the array length
+, and returns the value that it removed.
+Both =unshift()= and =shift()= methods modify the array in place rather than
+produce a modified copy of the array.
+Both methods behave much like push and pop, except that they insert and remove
+elements from the beginning of an array rather than from the end. Note that
+arguments are inserted or deleted all at once.
+*** ECMAScript 5 Array Methods
+    :PROPERTIES:
+    :CUSTOM_ID: ecmascript5ArrayMethods
+    :END:
+ECMAScript 5 defines nine new array methods for iterating, mapping, filtering,
+testing, reducing, and searching arrays. First, most of the methods accept a
+function as their first argument and invoke that function once for each element
+of the array. If the array is sparse, the function you pass is not invoked for
+non-existent elements. In most cases, the function you supply is invoked with
+three arguments: the value of the array element, the index of the array element,
+and the array itself. Most of the ECMAScript 5 array methods that accept a
+function as their first argument accept an optional second argument. If
+specified, the function is invoked as if it is a method of this second argument.
+None of the ECMAScript 5 array methods modify the array on which they are
+invoked.
+**** forEach()
+=forEach()= method iterates through an array, invoking a function you specify
+for each element. Note that =forEach()= does not provide a way to terminate
+iteration before all elements have been passed to the function. If you need to
+terminate early, you must throw an exception, and place the call to =forEach()=
+within a =try= block.
+**** map()
+=map()= method passes each element of the array on which it is invoked to the
+function you specify, and returns an array containing the values returned by
+that function. If the array is sparse, the returned array will be sparse in the
+same way: it will have the same length and the same missing elements.
+**** filter()
+=filter()= method returns an array containing a subset of the elements of the
+array on which it is invoked. Note that =filter()= skips missing elements in
+sparse arrays, and that its return value is always dense.
+**** every() and some()
+=every()= method is like the mathematical "for all" quantifier \forall: it
+returns true if and only if your predicate function returns true for all
+elements in the array. Returns true when invoked on an empty array.
+=some()= method is like the mathematical "there exists" quantifier \exist: it
+returns true if there exists at least one element in the array for which the
+predicate returns true, and returns false if and only if the predicate returns
+false for all elements of the arrays. Returns false when invoked on an empty
+array.
+**** reduce() and reduceRight()
+Both methods combine the elements of an array, using the function you specify,
+to produce a single value.
+**** indexOf() and lastIndexOf()
+Search an array for an element with a specified value, and return the index of
+the first/last such element found, or -1 if none is found.
+*** Array Type
+    :PROPERTIES:
+    :CUSTOM_ID: arrayType
+    :END:
+In ECMAScript 5, =Array.isArray()= function is used to determine whether an
+array is an array or not.
+*** Array-like Objects
+    :PROPERTIES:
+    :CUSTOM_ID: arrayLikeObjects
+    :END:
+The JavaScript array methods are purposely defined to be generic, so that they
+work correctly when applied to array-like objects in addition to true arrays.
+Array-like objects do not inherit from =Array.prototype=, you cannot invoke
+array methods on them directly.
+*** Strings As Arrays
+    :PROPERTIES:
+    :CUSTOM_ID: stringsAsArrays
+    :END:
+Keep in mind that strings are immutable values, they are read-only arrays.
+Attempting to modify a string using an array method does not, however, cause an
+error: it simply fails silently.
