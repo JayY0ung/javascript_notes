@@ -29,7 +29,7 @@ Java-Script Subsets and Extensions.operation
 Client-Side JavaScript does not exhibit the nonlinear cross-reference problem
 nearly to the extent that the core language does, and it is possible to learn
 how to use JavaScript in web browsers in a fairly linear sequence.
-* Getting StartedS
+* Getting Started
   :PROPERTIES:
   :CUSTOM_ID: gettingStarted
   :END:
