@@ -18,10 +18,10 @@ Main structure of the book.
    :PROPERTIES:
    :CUSTOM_ID: coreJavascript
    :END:
-This is the lowest level of Java-Script including Lexical Structure, Types,
+This is the lowest level of JavaScript including Lexical Structure, Types,
 Values, Variables, Expressions and Operators, Statements, Objects, Arrays,
 Functions, Classes and Modules, Pattern Matching with Regular Expressions,
-Java-Script Subsets and Extensions.operation
+JavaScript Subsets and Extensions.
 ** Client-Side JavaScript
    :PROPERTIES:
    :CUSTOM_ID: clientSideJavascript
