@@ -1145,7 +1145,7 @@ literal syntax:
 #+begin_src javascript
   var o = {
     // an ordinary data property
-    data_type: value,
+    data_prop: value,
 
     // an accessor property defined as a pair of functions
     get accessor_prop() {/* function body here */},
