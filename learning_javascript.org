@@ -718,7 +718,7 @@ make something happen (create side effects).
     :END:
 **** function
 #+begin_src javascript
-  var f = function(x) { return x+1; }; // Expression assigned to a variable
+  var f = function(x) { return x+1; } // Expression assigned to a variable
   function f(x) { return x+1; }        // Statement includes variable name
 #+end_src
 Function declaration statements may appear in top-level JavaScript code, or they
