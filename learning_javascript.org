@@ -1352,7 +1352,8 @@ concatenates them, returning the resulting string. An optional string separates
 the elements in the resulting string. If no separator string is specified, a
 comma is used.
 =Array.reverse()= method reverses the order of the elements of an array and
-returns the reversed array.
+returns the reversed array. It does not create a new rearranged array, but
+instead in the already existing array.
 =Array.sort()= method sorts the elements of an array in place and returns the
 sorted array. When it is called with no arguments, it sorts the array elements
 in alphabetical order. If an array contains undefined elements, they are sorted
@@ -1388,11 +1389,11 @@ specified by the first argument. For example,
 returns the new length of the array.
 =pop()= method deletes the last element of an array, decrements the array length
 , and returns the value that it removed.
-Both =unshift()= and =shift()= methods modify the array in place rather than
-produce a modified copy of the array.
-Both methods behave much like push and pop, except that they insert and remove
-elements from the beginning of an array rather than from the end. Note that
-arguments are inserted or deleted all at once.
+=unshift()= and =shift()= methods behave much like =push()= and =pop()=, except
+that they insert and remove elements from the beginning of an array rather than
+from the end. Both =unshift()= and =shift()= methods modify the array in place
+rather than produce a modified copy of the array.Note that arguments are
+inserted or deleted all at once.
 *** ECMAScript 5 Array Methods
     :PROPERTIES:
     :CUSTOM_ID: ecmascript5ArrayMethods
