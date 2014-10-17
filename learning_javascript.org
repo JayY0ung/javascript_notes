@@ -1460,3 +1460,55 @@ array methods on them directly.
 Keep in mind that strings are immutable values, they are read-only arrays.
 Attempting to modify a string using an array method does not, however, cause an
 error: it simply fails silently.
+** Functions
+   :PROPERTIES:
+   :CUSTOM_ID: functions
+   :END:
+A function is a block of JavaScript code that is defined once but may be executed,
+or invoked, any number of times. Function parameters work as local variables for
+the body of the function. In addition to the arguments, each invocation has
+another value - the invocation context - that is the value of the *this* keyword.
+
+If a function is assigned to the property of an object, it is known as a method of
+that object. When a function is invoked on or through an object, that object is
+the invocation context or *this* value of the function.
+
+Functions designed to initialize a newly created object are called constructors.
+
+In JavaScript, functions are objects, and they can be manipulated by programs.
+JavaScript can assign functions to variables and pass them to other functions.
+You can set properties on functions, and even invoke methods on them.
+
+JavaScript function /definitions/ (not declaration) can be nested within other
+functions, and they have access to any variables that are in scope where they
+are defined. This means that JavaScript functions are *closures*.
+*** Defining Functions
+    :PROPERTIES:
+    :CUSTOM_ID: definingFunctions
+    :END:
+Functions are defined with the *function* keyword, which can be used in a
+function definition expression or in a function declaration statement. For
+function definition expressions, the function name is optional: if present,
+the name refers to the function object only within the body of the fucntion
+itself.
+
+Function declaration statements are "hoisted" to the top of the enclosing
+script or the enclosing function, they can be invoked before they are defined.
+By contrast, functions defined with expressions cannot be invoked before
+they are defined.
+
+Most, but not all, of the functions contain a return statement. The =return=
+statement causes the function to stop executing and to return the value of
+its expression to the caller. If the =return= statement does not contain a
+=return= expression or a function does not contain a =return= statement,
+it simply returns the *undefined* value.
+**** Nested Functions
+In JavaScritp, functions may be nested within other functions. The nested
+functions can access the parameters and variables of the function
+they are nested within.
+
+Function declaration statements are not true statements, and the
+specification only allows them as top-level statements. They can appear in
+global code, or within other functions, but they cannot appear inside of loops,
+conditions, or =try/catch/finally= or =with= statements. Function definition
+expressions may appear anywhere in your JavaScript code.
