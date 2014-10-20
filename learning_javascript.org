@@ -1512,3 +1512,39 @@ specification only allows them as top-level statements. They can appear in
 global code, or within other functions, but they cannot appear inside of loops,
 conditions, or =try/catch/finally= or =with= statements. Function definition
 expressions may appear anywhere in your JavaScript code.
+*** Invoking Functions
+    :PROPERTIES:
+    :CUSTOM_ID: invokingFunctions
+    :END:
+The JavaScript code that makes up the body of a function is not executed when the
+function is defined but when it is invoked. 4 ways to invoke functions:
+1. as function
+2. as method
+3. as constructor
+4. indirectly through their =call()= and =apply()= method
+**** Function Invocation
+In an invocation, each argument expression is evaluated, and the resulting values
+become the arguments to the function.
+
+For regular function invocation, the return value of the function becomes the value
+of the invocation expression. If the function returns because the interpreter
+reaches the end, the return value is *undefined*.
+
+For function invocation in ECMAScript 3 and nonstrict ECMAScript 5, the invocation
+context (the *this* value) is the global object. In strict mode, however, the
+invocation context is *undefined*. This characters can be used to determine
+whether strict mode is in effect:
+#+begin_src javascript
+  // Define and invoke a function to determine if we've in strict mode
+  var strict = (function() { return !this; }());
+#+end_src
+**** Method Invocation
+If you have a function f and an object o, you can define a method named m of o
+with the following line:
+#+begin_src javascript
+  o.m = f;
+#+end_src
+Having defined the method =m()= of the object o, invoke it like this:
+#+begin_src javascript
+  o.m();
+#+end_src
