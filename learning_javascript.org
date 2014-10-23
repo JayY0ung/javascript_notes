@@ -1548,3 +1548,451 @@ Having defined the method =m()= of the object o, invoke it like this:
 #+begin_src javascript
   o.m();
 #+end_src
+Method invocations differ from function invocations in one important way,
+however: the invocation context. Property access expressions consist of two
+parts: an object and a property name. In a method invocation expression, the
+object o becomes the invocation context, and the function body can refer to
+that object by using the keyword *this*. For example,
+#+begin_src javascript
+  var calculator = {              // An object literal
+    operand1: 1,
+    operand2: 1,
+    add: function() {
+      // Note the use of the this keyword to refer to this object.
+      this.result = this.operand1 + this.operand2;
+    }
+  };
+  calculator.add();               // A method invocation to compute 1+1.
+  calculator.result               // => 2
+#+end_src
+Note that *this* is a keyword, not a variable or property name. JavaScript
+syntax does not allow you to assign a value to *this*.
+
+Unlike variables, the *this* keyword does not have a scope, and nested functions
+do not inherit the *this* value of the containing. If a nested function is
+invoked as a method, its *this* value is the object it was invoked on. If a
+nested function is invoked as a function then its *this* value will be either
+the global object (non-strict mode) or *undefined* (strict mode). For example,
+#+begin_src javascript
+  var o = {                       // an object o
+    m: function() {               // method m of the object
+      var self = this;            // save the this value in a variable
+      console.log(this === o);    // prints "true": this is the object o
+      f();                        // now call the helper function f()
+
+      function f() {              // a nested function f
+        console.log(this === o);  // "false": this is global or undefined
+        console.log(self === o);  // "true": self is the outer this value
+      }
+    }
+  };
+  o.m();                          // invoke the method m on the object o
+#+end_src
+**** Constructor Invocation
+If a function or method invocation is preceded by the keyword *new*, then it is
+a constructor invocation. Constructor invocations differ from regular function
+and method invocations in their handling of arguments, invocation context, and
+return value.
+
+If a constructor has no parameters, then JavaScript constructor invocation
+syntax allows the argument list and parentheses to be omitted entirely. The
+following two lines are equivalent:
+#+begin_src javascript
+  var o = new Object();
+  var o = new Object;
+#+end_src
+
+A constructor invocation creates a new, empty object that inherits from the
+*prototype* property of the constructor. Constructor functions are intended to
+initialize objects and this newly created object (even if the constructor
+invocation looks like a method invocation) is used as the invocation context,
+so the constructor function can refer to it with the *this* keyword.
+
+Constructor functions do not normally use the *return* keyword. Normally, this
+newly creately object is the value of the constructor invocation expression. If,
+however, a constructor explicitly used the *return* statement to return an
+object, then that object becomes the value of the invocation expression. If the
+constructor uses *return* with no value, or if it returns a primitive value,
+that return value is ignored and the new object is used as the value of the
+invocation.
+**** Indirect Invocation
+Two of these methods, =call()= and =apply()=, invoke the function indirectly.
+The =call()= method uses its own argument list as arguments to the function and
+the =apply()= method expects an array of values to be used as arguments.
+*** Function Arguments and Parameters
+    :PROPERTIES:
+    :CUSTOM_ID: functionArgumentsAndParamenters
+    :END:
+JavaScript function definitions do not specify an expected type for the function
+parameters, and function invocations do not do any type checking on the argument
+values you pass.
+**** Optional Parameters
+When a function is invoked with fewer arguments than declared parameters, the
+additional parameters are set to the *undefined* value.
+**** Variable-Length Argument Lists: The Arguments Object
+The Arguments object is an array-like object that allows the argument values
+passed to the function to be retrieved by number, rather than by name.
+*argument* has a *length* property that specifies the number of elements it
+contains. One important use of the Arguments object is to write functions that
+operate on any number of arguments. For example:
+#+begin_src javascript
+  function max(/* ... */) {
+    var max = Number.NEGATIVE_INFINITY;
+    for(var i = 0; i < arguments.length; i++) {
+      if (arguments[i] > max) {
+        max = arguments[i];
+      }
+    }
+    return max;
+  }
+
+  var largest = max(1, 10, 100, 2, 3, 1000, 4, 5, 10000, 6); // => 10000
+#+end_src
+Remember that *arguments* is not really an array; it is an Arguments object. In
+non-strict mode, the numbered elements of the Arguments object and the parameter
+names are like two different names for the same variable. In strict mode, it is
+effectively a reserved word.
+***** The callee and caller properties
+In strict mode, these properties are guaranted to raise a TypeError if you try
+to read or write them. Outside of strict mode, however, the *callee* property
+refers to the currently running function. *caller* is a nonstandard but commonly
+implemented property that refers to the function that called this one. The
+*caller* property gives access to the call stack, and the callee property is
+occasionally useful to allow unnamed functions to call themselves recursively:
+#+begin_src javascript
+  var factorial = function(x) {
+    if (x <= 1) return 1;
+    return x * arguments.callee(x-1);
+  };
+#+end_src
+**** Using Object Properties As Arguments
+To save the programmer the trouble of consulting the documentation each time he
+uses the function, it can be nice to allow arguments to be passed as name/value
+pairs in any order. To implement this style of method invocation, define your
+function to expect a single object as its argument and then have users of the
+function pass an object that defines the required name/value pairs.
+#+begin_src javascript
+  function arraycopy(from, from_start, to, to_start, length) {
+    // code goes here
+  }
+
+  function easycopy(args) {
+    arraycopy(args.from,
+              args.from_start || 0
+              args.to,
+              args.to_start || 0,
+              length);
+  }
+
+  // Here is how you might invoke easycopy():
+  var a = [1,2,3,4], b = [];
+  easycopy({from: a, to: b, length: 4});
+#+end_src
+**** Argument Types
+JavaScript method parameters have no declared types, and no type checking is
+performed on the values you pass to the function. If you pass wrong types of
+parameters to function, JavaScript performs liberal type conversion as needed.
+All primitive types can be converted to strings, and all objects have
+=toString()= methods, so an error never occurs in this case. However, this is
+not true. Two examples explain words:
+#+begin_src javascript
+  // Return the sum of the elements of array (or array-like object) a.
+  // The elements of a must all be numbers or null and undefined are ignored.
+  function sum(a) {
+    if (isArrayLike(a)) {
+      var total = 0;
+      for(var i = 0; i < a.length; i++) {
+        var element = a[i];
+        if (element == null) continue;
+        if (isFinite(element)) total += element;
+        else throw new Error("sum(): elements must be finite numbers.");
+      }
+    }
+    else throw new Error("sum(): arguments must be array-like.");
+  }
+#+end_src
+This =sum()= method is fairly strict, we can offer a bit of flexibility version.
+#+begin_src javascript
+  function flexisum(a) {
+    var total = 0;
+    for(var i = 0; i < arguments.length; i++) {
+      var element = arguments[i], n;
+      if (element == null) continue; // Ignore null and undefined arguments
+      if (isArray(element))          // If the argument is an array
+        n = flexisum.apply(this, element);      // compute its sum recursively
+      else if (typeof element === "function") { // Else if it's a function...
+        n = Number(element());    // invoke it and convert
+      }
+      else n = Number(element);   // Else try to convert it
+
+      if (isNaN(n)) {             // If we couldn't convert to a number, throw
+                                  // an error
+        throw Error("flexisum(): can't convert " + element + " to number.");
+      }
+      total += n;                 // Otherwise, add n to the total
+    }
+    return total;
+  }
+#+end_src
+*** Functions As Values
+    :PROPERTIES:
+    :CUSTOM_ID: functionsAsValues
+    :END:
+Functions can be assigned to variables, stored in the properties of objects or
+the elements of arrays, passed as arguments to functions.
+**** Defining Your Own Function Properties
+When a function needs a "static" variable whose value persists across
+invocations, it is often convenient to use a property of the function, instead
+of cluttering up the namespace by defining a global variable.
+#+begin_src javascript
+  // Initialize the counter property of the function object
+  // Function declarations are hoisted so we really can do this assignment
+  // before the function declaration
+  uniqueInteger.counter = 0;
+
+  // This function returns a different integer each time it is called.
+  // It uses a property of itself to remember the next value to be returned.
+  function uniqueInteger() {
+    return uniqueInteger.counter++;
+  }
+#+end_src
+*** Functions As Namespaces
+    :PROPERTIES:
+    :CUSTOM_ID: functionsAsNamespaces
+    :END:
+Avoid conflicting with variables used by other programs is to put the code into
+a function and then invoke the function. In this way, variables that would have
+been global become local to the function.
+#+begin_src javascript
+  function mymodule() {
+    // Module code goes here
+    // Any variables used by the module are local to this function
+    // instead of cluttering up the global namespace.
+  }
+  mymodule();
+#+end_src
+If defining even a single property is too much, you can define and invoke an
+anonymous function in a single expression.
+#+begin_src javascript
+  (function() {
+    // mymodule function rewritten as an unnamed expression
+    // Module code goes here.
+  }());
+#+end_src
+Note that the open parenthesis before function is required!
+Example below demonstrates this namesapce technique:
+#+begin_src javascript
+  // Define an extend function that copies the properties of its second and
+  // subsequent arguments onto its first argument.
+  // We work around an IE bug here: in many versions of IE, the for/in loop
+  // won't enumerate an enumerable property of o if the prototype of o has
+  // a nonenumerable property by the same name. This means that properties
+  // like toString are not handled correctly unless we explicitly check for them.
+  var extend = (function() {
+    // First check for the presence of the bug before patching it.
+    for(var p in {toString:null}) {
+      return function extend(o) {
+        for(var i = 1; i < arguments.length; i++) {
+          var source = arguments[i];
+          for(var prop in source) o[prop] = source[prop];
+        }
+        return o;
+      };
+    }
+    // If we get there, it means that the for/in loop did not enumerate the
+    // toString property of the test object.
+
+    // This is the list of special-case properties we check for
+    var protoprops = ["toString", "valueOf", "constructor", "hasOwnProperty",
+                      "isPrototypeOf", "propertyIsEnumerable", "toLocalString"];
+    return function patched_extend(o) {
+      for(var i = 1; i < arguments.length; i++) {
+        var source = arguments[i];
+        for(var props in source) o[props] = source[props];
+
+        // And now check the special-case properties
+        for(var j = 0; j < protoprops.length; j++) {
+          prop = protoprops[j];
+          if (source.hasOwnProperty(prop)) o[prop] = source[prop];
+        }
+      }
+      return o;
+    };
+  }());
+#+end_src
+*** Closures
+    :PROPERTIES:
+    :CUSTOM_ID: closures
+    :END:
+JavaScript uses /lexical scoping/. This means that functions are executed using
+the variable scope that was in effect when they were /defined/, not the variable
+scope that is in effect when they are invoked. Closures become interesting when
+they are invoked under a different scope chain than the one that was in effect
+when they were defined. This happens most commonly when a nested function object
+is returned from the function within which it was defined.
+
+First example:
+#+begin_src javascript
+  var scope = "global scope";
+  function checkScope() {
+    var scope = "local scope";
+    function f() {
+      return scope;
+    }
+    return f();
+  }
+
+  checkScope();                   // => local scope
+#+end_src
+Second example:
+#+begin_src javascript
+  var scope = "global scope";
+  function checkScope() {
+    var scope = "local scope";
+    function() {
+      return scope;
+    }
+    return f;
+  }
+
+  checkScope()();                 // => also returns local scope
+#+end_src
+Once that outer function returns, no other code can see the private variable:
+the inner function has exclusive access to it.
+
+Private variables need not be exclusive to a single closure: it is perfectly
+possible for two or more nested functions to be defined within the same outer
+function and share the same scope chain. Consider the following code:
+#+begin_src javascript
+  function counter() {
+    var n = 0;
+    return {
+      count: function() {
+        return n++;
+      },
+      reset: function() {
+        n = 0;
+      }
+    };
+  }
+
+  var c = counter(), d = counter(); // Create two counters
+  c.count()                         // => 0
+  d.count()                         // => 0: they count independently
+  c.reset()                         // reset() and count() methods share state
+  c.count()                         // => 0: because we reset c
+  d.count()                         // => 1: d was not reset
+#+end_src
+We have two things to understand the above code. The first thing to understand
+is that the two methods share access to the private variable n. The second thing
+to understand is that each invocation of =counter()= creates a new scope chain
+and a new private variable. So if you call =counter()= twice, you get two
+counter objects with different variables. Calling =count()= or =reset()= on one
+counter object has no effect on the other.
+
+It is worth noting that you can combine this closure technique with property
+getters and setters. The following code uses closures for private state rather
+than relying on a regular object property:
+#+begin_src javascript
+  function counter(n) {            // Function argument n is the private Variable
+    return {
+      // Property getter method returns and increments private counter var.
+      get count() { return n++; },
+      // Property setter doesn't allow the value of n to decrease
+      set count(m) {
+        if (m > n) {
+          n = m;
+        } else
+          throw Error("Count can only be set to a larger value");
+      }
+    };
+  }
+
+  var c = counter(1000);
+  c.count                         // => 1000
+  c.count                         // => 1001
+  c.count = 2000
+  c.count                         // => 2000
+  c.count = 2000                  // => Error!
+#+end_src
+
+#+begin_src javascript
+  // Private property accessor methods using closures
+  // This function adds property accessor methods for a property with
+  // the specified name to the object o. The methods are named get<name>
+  // and set<name>. If a predicate function is supplied, the setter method
+  // uses it to test its argument for validity before storing it.
+  // If the predicate returns false, the setter method throws an exception.
+  //
+  // The unusual thing about this function is that the property value that
+  // is manipulated by the getter and setter methods is not stored in the
+  // object o. Instead, the value is stored only in a local variable in this
+  // function. The getter and setter methods are also defined locally to this
+  // function and therefore have access to this local variable.
+  // This means that the value is private to the two accessor methods, and it
+  // cannot be set or modified except through the setter method.
+  function addPrivateProperty(o, name, predicate) {
+    var value;                    // This is the property value
+
+    // The getter method simply returns the value.
+    o["get" + name] = function() { return value; };
+
+    // The setter method stores the value or throws an exception if
+    // the predicate rejects the value.
+    o["set" + name] = function(v) {
+      if (predicate && !predicate(v))
+        throw Error("set" + name + ": invalid value " + v);
+      else
+        value = v;
+    };
+  }
+
+  // The following code demonstrates the addPrivateProperty() method.
+  var o = {};
+
+  // Add property accessor methods getName() and setName()
+  // Ensure that only string values are allowed
+  addPrivateProperty(o, "Name", function(x) { return typeof x == "string"; });
+
+  o.setName("Frank");             // Set the property value
+  console.log(o.getName());       // Get the property value
+  o.setName(0);                   // Try to set a value of the wrong type
+#+end_src
+In the example, two closures are defined in the same scope chain and share
+access to the same private variable or variables. This is important technique,
+but it is just as important to recognize when closures inadvertently share
+access to a variable that they should not share. Compare the following two
+examples:
+
+#+begin_src javascript
+  // This function returns a function that always returns v
+  function constfunc(v) { return function() { return v; }; }
+
+  // Creates an array of constant functions:
+  var funcs = [];
+  for(var i = 0; i < 10; i++) {
+    funcs[i] = constfunc(i);
+  }
+
+  // The function at array element 5 returns the value 5.
+  funcs[5]()                      // => 5
+#+end_src
+
+#+begin_src javascript
+  // Return an array of functions that return the values 0-9
+  function constfuncs() {
+    var funcs = [];
+    for(var i = 0; i < 10; i++) {
+      funcs[i] = function() {
+        return i;
+      };
+    }
+    return funcs;
+  }
+
+  var funcs = constfuncs();
+  funcs[5]()                      // What does this return? => 10
+#+end_src
+The second example above creates 10 closures, and stores them in an array.
+The closures are all defined within the same invocation of the function, so
+they share access to the variable i.
