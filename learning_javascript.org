@@ -1996,3 +1996,215 @@ examples:
 The second example above creates 10 closures, and stores them in an array.
 The closures are all defined within the same invocation of the function, so
 they share access to the variable i.
+
+Another thing to remember when writing closures is that *this* is a JavaScript
+keyword, not a variable. Every function invocation has a *this* value, and a
+closure cannot access the *this* value of its outer function unless the outer
+function has saved that value into a variable. The *arguments* binding is
+similar. This is not a language keyword, but it is automatically declared for
+every function invocation. Since a closure has its own binding for *arguments*,
+it cannot access the outer function's arguments array unless the outer function
+has saved that array into a variable by a different name.
+*** Function Properties, Methods, and Constructor
+    :PROPERTIES:
+    :CUSTOM_ID: functionPropertiesMethodsAndConstructor
+    :END:
+Functions are values in JavaScript programs, but functions are really a
+specialized kind of JavaScript object. Since functions are objects, they can
+have properties and methods, just like any other object.
+**** The Length Property
+Within the body of a function, =arguments.length= specifies the number of
+arguments that were passed to the function. The =length= property of a function
+itself is usually the number of arguments that the function expects.
+#+begin_src javascript
+  // This function uses arguments.callee, so it won't work in strict mode
+  function check(args) {
+    var actual = args.length;     // The actual number of arguments
+    var expected = args.callee.length; // The expected number of arguments
+    if (actual !== expected) {         // Throw an exception if they differ.
+      throw Error("Expected " + expected + "args; got " + actual);
+    }
+  }
+
+  function f(x, y, z) {
+    check(arguments);             // Check that the actual # of args matches
+    // expected #
+    return x + y + z;             // Now do the rest of the function normally.
+  }
+#+end_src
+**** The prototype Property
+Every funciton has a =prototype= property that refers to an object known as
+the prototype object. Every function has a different prototype object. When
+a function is used as a constructor, the newly created object inherits
+properties from the prototype object.
+**** The =call()= and =apply()= Method
+=call()= and =apply()= allow you to indirectly invoke a function as if it were
+a method of some other object. The first argument to both =call()= and =apply()=
+is the object on which the function is to be invoked; this argument is the
+invocation context and becomes the value of the *this* keyword within the body
+of the function. To invoke the function =f()= as a method of the object o, you
+could use either =call()= or =apply()=:
+#+begin_src javascript
+  f.call(o);
+  f.apply(o);
+#+end_src
+
+In strict mode the first argument to =call()= or =apply()= becomes the value of
+*this*, even if it is a primitive value or =null= or =undefined=. In non-strict
+mode, a value of =null= or =undefined= is replaced with the global object and
+a primitive value is replaced with the corresponding wrapper object.
+
+Any arguments to =call()= after the first invocation context argument are the
+values that are passed to the function that is invoked.
+The =apply()= method is like the =call()= method, except that the arguments to
+be passed to the function are specified as an array.
+If a function is defined to accept an arbitrary number of arguments, the
+=apply()= method allows you to invoke that function on the contents of an array
+of arbitrary length. For example:
+#+begin_src javascript
+  var biggest = Math.max.apply(Math, array_of_numbers);
+#+end_src
+
+Note that =apply()= works with array-like objects as well as true arrays. You
+can invoke a function with the same arguments as the current function by
+passing the *arguments* array directly to =apply()=.
+#+begin_src javascript
+  // Replace the method named m of the object o with a version that logs
+  // messages before and after invoking the original method.
+  function trace(o, m) {
+    var original = o[m];          // Remember original method in the closure.
+    o[m] = function() {           // Now define the new method
+      console.log(new Date(), "Entering:", m);
+      var result = original.apply(this, arguments);
+      console.log(new Date(), "Exiting:", m);
+      return result;
+    };
+  }
+#+end_src
+The =trace()= function is passed an object and a method name. It replaces the
+specified method with a new method that "wraps" additional functionality around
+the original method. This kind of dynamic alteration of existing methods is
+sometimes called "monkey-patching".
+More details about [[http://me.dt.in.th/page/JavaScript-override/][Monkey-Patching, Overriding, and Decorating Methods in JavaScript.]]
+Monkey-patching is a way to override or extend the behaviour of a method without
+changing its original source code. The following shows you how you can do it in
+a beautiful way in JavaScript.
+*original code*
+Let's take this class as an example. The =Tester= class has a method
+=saveResult= that saves the test result to a file specified by =filepath=.
+#+begin_src javascript
+  function Tester() {
+  }
+
+  Tester.prototype.saveResults = function(filepath) {
+    console.log('Save test result to ' + filepath);
+  }
+
+  Tester.prototype.run = function() {
+    console.log('Running test...');
+    this.saveResults('test.xml');
+  }
+
+  // And it'd be used like this
+  var test = new Tester();
+  test.run();
+#+end_src
+Let's say that the =Tester= class is written by a third-party, so I don't want
+to modify its source code. However, I wanted my Tester to also generate and
+save a test plan file after the test result is saved. This is where
+monkey-patching comes in.
+*stupid monkey-patching*
+This is the simplest way to do monkey patching. Just copy the source code and
+modify it to your needs, replacing the original function.
+#+begin_src javascript
+  var test = new Tester();
+  test.saveResults = function(filepath) {
+    console.log('Save test result to ' + filepath); // old code
+    var planpath = filepath.replace('.xml', '_plan.xml'); // new code
+    console.log('Save test plan to ' + planpath);         // new code
+  }
+
+  test.run();
+#+end_src
+It works but you have to duplicate some code from the source code.
+*store a reference to the original function*
+We can store a reference to the original function, and call it in our new
+function.
+#+begin_src javascript
+  var test = new Tester();
+
+  var originalSaveResults = test.saveResults;
+  test.saveResults = function(filepath) {
+    var returnValue = originalSaveResults.apply(this, arguments);
+    var planpath = filepath.replace('.xml', '_plan.xml');
+    console.log('Save test plan to ' + planpath);
+    return returnValue;
+  };
+
+  test.run();
+#+end_src
+Having to do this every time we monkey-patching a function seems to me like
+a lot of work. There has to be a better way...
+*meet the override function*
+When we override a method, we
+1. save the original function in a variable, and
+2. replace that method with the function we desire to use.
+So I factored it out. Here's our override function:
+#+begin_src javascript
+  function override(object, methodName, callback) {
+    object[methodName] = callback(object[methodName]);
+  }
+#+end_src
+What it does is this: it sends the original function into the =callback()=
+function, and whateve that =callback()= function returns, we replace the
+object's method with it.
+Here's how we can use it:
+#+begin_src javascript
+  var test = new Tester();
+
+  override(test, 'saveResults', function(original) {
+    return function(filepath) {
+      var returnValue = original.apply(this, arguments);
+      var planpath = filepath.replace('.xml', '_plan.xml';);
+      console.log('Save test plan to ' + planpath);
+      return returnValue;
+    };
+  })
+
+  test.run()
+#+end_src
+Now it's very clear that we are overriding a function, and no more do we
+have save the original function in a variable - it gets passed into the
+callback function. Also, instead of having to write the name of the method
+to monkey-patching twice, we only have to write it once. However, having to
+call the original function, and save its return value, and return it myself does
+not look ideal...
+There has to be a better way...
+*meet the after decorator*
+You see the pattern: in the function we want to replace, we
+1. call the original function
+2. save its return value
+3. do our work, and
+4. return the saved return value
+We can factor that out too. Meet the after funciton:
+#+begin_src javascript
+  function after(extraBehaviour) {
+    return function(original) {
+      return function() {
+        var returnValue = original.apply(this, arguments);
+        extraBehaviour.apply(this, arguments);
+        return returnValue;
+      };
+    };
+  }
+#+end_src
+It's a decorator. It takes a function extraBehaviour, and return a function
+suitable for passing to override - a function that takes the original function
+and return the altered behaviour. We can use it like this.
+#+begin_src javascript
+  override(test, 'saveResults', after(function(filepath) {
+    var planpath = filepath.replace('.xml', '_plan.xml');
+    console.log('Save test plan to ' + planpath);
+  }))
+#+end_src
+**** The =bind()= Method
