@@ -2207,4 +2207,111 @@ and return the altered behaviour. We can use it like this.
     console.log('Save test plan to ' + planpath);
   }))
 #+end_src
+
+Monkey-patching is extremely useful when you want to modify the behaviour of
+some methods, but you don't want to alter its source code. For example, when
+attaching some extra behaviour or when working around an issue in a third-party
+library.
+However, I don't recommend using it in your own code because when you read the
+original function, it will be hard to predict if some extra behaviour will run
+because it's been monkey-patched somewhere else in your application or not.
+It's better to make an object extensible explicitly (using hooks, event or
+whatever) than implicitly (monkey-patches on top of monkey patches).
 **** The =bind()= Method
+The =bind()= method is to bind a function to an object. When you invoke the
+=bind()= method on a function f and pass an object o, the method returns a new
+function. For example:
+#+begin_src javascript
+  function f(y) {
+    return this.x + y;
+  }
+  var o = { x: 1 };
+  var g = f.bind(o);
+  g(2)                            // => 3
+#+end_src
+It is easy to accomplish this kind of binding with code like the following:
+#+begin_src javascript
+  // Return a function that invokes f as a method of o, passing all its arguments
+  function bind(f, o) {
+    if (f.bind) return f.bind(o);
+    else return function() {
+      return f.apply(o, arguments);
+    };
+  }
+#+end_src
+The ECMAScript 5 =bind()= method does more than just bind a function to an
+object. It also performs partial application: any arguments you pass to =bind()=
+after the first are bound along with the *this* value.
+We can simulate the standard =bind()= method with the following example:
+#+begin_src javascript
+  // A Function.bind() method for ECMAScript 3
+  if (!Function.prototype.bind) {
+    Function.prototype.bind = function(o /*, args */) {
+      // Save the this and arguments values into variables so we can
+      // use them in the nested function below.
+      var self = this, boundArgs = arguments;
+
+      // The return value of the bind() method is a function
+      return function() {
+        // Build up an argument list, starting with any args passed
+        // to bind after the first one, and follow those with all args
+        // passed to this function
+        var args = [], i;
+        for (i = 1; i < boundArgs.length; i++) args.push(boundArgs[i]);
+        for (i = 0; i < arguments.length; i++) args.push(arguments[i]);
+
+        // Now invoke self as a method of o, with those arguments
+        return self.apply(o, args);
+      };
+    };
+  }
+#+end_src
+**** The =toString()= Method
+In practice most (but not all) implementations of this =toString()= method
+return the complete source code for the function. Built-in functions typically
+return a string that includes something like "[native code]" as the function
+body.
+**** The =Function()= Constructor
+The =Function()= constructor expects any number of string arguments. The last
+argument is the text of the function body; it can contain arbitray JavaScript
+statements, separated from each other by semicolons. All other arguments to the
+constructor are strings that specify the parameters names for the function.
+For example:
+#+begin_src javascript
+  var f = new Function("x", "y", "return x * y;");
+  // Equivalent to the following
+  var f = function(x, y) {
+    return x * y;
+  }
+#+end_src
+A few points that are important to understand about the =Function()=
+constructor:
+
+1. The =Function()= constructor allows JavaScript functions to be dynamically
+created and compiled at runtime.
+2. The =Function()= constructor parses the function body and creates a new
+function object each time it is caled. If the call to the constructor appears
+within a loop or within a frequently called function, this process can be
+inefficient. By contrast, nested functions and function definition expressions
+that appear within loops are not recompiled each time they are encountered.
+3. The functions that the =Function()= constructor create do not use lexical
+scoping. Instead, they are always compiled as if they were top-level functions,
+as the following code demonstrates:
+#+begin_src javascript
+  var scope = "global";
+  function constructFunction() {
+    var scope = "local";
+    return new Function("return scope;"); // Does not capture the local scope!
+  }
+
+  constructFunction()();          // => "global"
+#+end_src
+**** Callable Objects
+All functions are callable, but not all callable objects are functions.
+If you want to determine whether an object is a true function object, you can
+test its class attribute using the following technique:
+#+begin_src javascript
+  function isFunction() {
+    return Object.prototype.toString.call(x) === "[object Function]";
+  }
+#+end_src
