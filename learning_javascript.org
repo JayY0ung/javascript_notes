@@ -1,5 +1,7 @@
 #+TITLE: Learning JavaScript
 #+LANGUAGE: EN
+#+STARTUP: hidestars
+#+STARTUP: indent
 #+AUTHOR: Yang Jie
 #+EMAIL: outstanding.yang@gmail.com
 #+DESCRIPTION: My notes on reading "JavaScript - The Definitive Guide 6th Edition"
