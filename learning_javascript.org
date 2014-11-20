@@ -1218,6 +1218,23 @@ Every object has associated /prototype/, /class/, /extensible/ attributes.
 In ECMAScript 5, you can query the prototype of any object by passing that
 object to =Object.getPrototypeOf()=. To determine whether one object is the
 prototype of another object, use the =isPrototypeOf()= method.
+
+The parent of object created by =new <F>(...)= constructor is:
+
++ the value of =<F>.prototype= at the time =new <F>(...)= is called, if the
+value returned by the function is not an object. For example:
+
+#+begin_src javascript
+  var o1 = {};
+  var FF = function() {};
+  FF["prototype"] = o1;
+  var ff = new FF();
+  console.log(Object.getPrototypeOf(ff) === o1); // true
+#+end_src
+
++ if the function has a =return= statement and returns an object, then parent
+is whatever the returned object's parent is.
+
 **** The class Attribute
 Use =classof()= to obtain object's class attribute.
 **** The extensible Attribute
